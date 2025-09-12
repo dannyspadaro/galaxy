@@ -1,5 +1,15 @@
 <?xml version='1.0' encoding='utf-8'?>
 <toolbox monitor="true">
+  <section id="alevin-fry" name="Alevin Fry">
+    <tool file="alevin-fry/collate.xml"/>
+    <tool file="alevin-fry/convert.xml"/>
+    <tool file="alevin-fry/generate-permit-list.xml"/>
+    <tool file="alevin-fry/infer.xml"/>
+    <tool file="alevin-fry/quant.xml"/>
+  </section>
+  <section id="webatlas" name="Webatlas pipeline">
+    <tool file="webatlas/router.xml"/>
+  </section>
   <section id="getext" name="Get Data">
     <tool file="data_source/diced.xml" />
     <tool file="data_source/upload.xml" />
