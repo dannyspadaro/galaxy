@@ -5,8 +5,18 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
-        ln -s '$input_image' input.tif &&
-        bioformats2raw --no-hcs input.tif output.zarr &&
+        if tiffinfo $input_image | grep "Compression Scheme:" | grep -wq "JPEG";
+        then
+            if od -h -j2 -N2 $input_image | head -n1 | sed 's/[0-9]*  *//' | grep -q -E '002b|2b00';
+            then
+                tiffcp -c none -m 0 -8 $input_image uncompressed.tif;
+            else
+                tiffcp -c none -m 0 $input_image uncompressed.tif || tiffcp -c none -m 0 -8 $input_image uncompressed.tif;
+            fi;
+                bioformats2raw --no-hcs uncompressed.tif output.zarr;
+        else
+            bioformats2raw --no-hcs $input_image output.zarr;
+        fi;
         python "${__tool_directory__}/consolidate_md.py" output.zarr &&
         tar -czf output.zarr.tar.gz output.zarr
     ]]></command>
