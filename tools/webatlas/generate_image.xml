@@ -6,14 +6,14 @@
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
     #if str( $input_type.input_type_selector ) == "label_visium":
-        #if $input_type.input_visium.ext = 'h5ad':
+        ## #if $input_type.input_visium.ext = 'h5ad':
             ln -s '$input_visium' input.h5ad &&
             python "${__tool_directory__}/generate_image.py" ${prefix} label visium input.h5ad
         ## #elif $input_type.input_visium.ext = 'gz':
         ##     mkdir unpacked_spaceranger &&
         ##     tar -xf '${input_visium}' -C unpacked_spaceranger &&
         ##     python "${__tool_directory__}/generate_image.py" ${prefix} label visium unpacked_spaceranger
-        #end if
+        ## #end if
     ## #elif str( $input_type.input_type_selector ) == "label_xenium":
     ##     #if $input_type.input_xenium.format = 'gz':
     ##         mkdir unpacked_xenium &&

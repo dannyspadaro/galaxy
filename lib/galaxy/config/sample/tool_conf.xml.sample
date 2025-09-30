@@ -10,6 +10,7 @@
   <section id="webatlas" name="Webatlas pipeline">
     <tool file="webatlas/router.xml"/>
     <tool file="webatlas/generate_image.xml"/>
+    <tool file="webatlas/consolidate_md.xml"/>
   </section>
   <section id="getext" name="Get Data">
     <tool file="data_source/diced.xml" />

@@ -1,0 +1,42 @@
+<tool id="webatlas_consolidate_md" name="Webatlas Consolidate Metadata" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
+    <description>TODO description</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
+    <command detect_errors="exit_code"><![CDATA[
+        ln -s '$input_image' input.tif &&
+        bioformats2raw --no-hcs input.tif output.zarr &&
+        python "${__tool_directory__}/consolidate_md.py" output.zarr &&
+        tar -czf output.zarr.tar.gz output.zarr
+    ]]></command>
+    <inputs>
+        <param name="input_image" type="data" format="tiff" label="tif image"/>
+    </inputs>
+    <outputs>
+        <data name="output_zarr" format="tar.gz" label="${tool.name} on ${on_string}: zarr output" from_work_dir="output.zarr.tar.gz"/>
+    </outputs>
+    <tests>
+        <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->
+    </tests>
+    <help><![CDATA[
+
+.. class:: infomark
+
+**What it does**
+
+TODO: Fill in help in reStructuredText format (https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html)
+
+Usage
+.....
+
+
+**Input**
+
+
+**Output**
+
+
+    ]]></help>
+    <expand macro="citations"/>
+</tool>
