@@ -5,31 +5,27 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
-    #if str( $input_type.input_type_selector ) == "label_visium":
-        ## #if $input_type.input_visium.ext = 'h5ad':
-            ln -s '$input_visium' input.h5ad &&
-            python "${__tool_directory__}/generate_image.py" ${prefix} label visium input.h5ad
-        ## #elif $input_type.input_visium.ext = 'gz':
-        ##     mkdir unpacked_spaceranger &&
-        ##     tar -xf '${input_visium}' -C unpacked_spaceranger &&
-        ##     python "${__tool_directory__}/generate_image.py" ${prefix} label visium unpacked_spaceranger
-        ## #end if
-    ## #elif str( $input_type.input_type_selector ) == "label_xenium":
-    ##     #if $input_type.input_xenium.format = 'gz':
-    ##         mkdir unpacked_xenium &&
-    ##         tar -xf '${input_xenium}' -C unpacked_xenium &&
-    ##         python "${__tool_directory__}/generate_image.py" ${prefix} label xenium unpacked_xenium
-    ##     #elif $input_type.input_xenium.format = 'zip':
-    ##         python "${__tool_directory__}/generate_image.py" ${prefix} label xenium '${input_xenium}'
-    ##     #end if
-    ## #elif str( $input_type.input_type_selector ) == "label_merscope":
-    ##     mkdir unpacked_merscope &&
-    ##     tar -xf '${input_merscope_label}' -C unpacked_merscope &&
-    ##     python "${__tool_directory__}/generate_image.py" ${prefix} label merscope unpacked_merscope
-    ## #elif str( $input_type.input_type_selector ) == "raw_merscope":
-    ##     mkdir unpacked_merscope &&
-    ##     tar -xf '${input_merscope_raw}' -C unpacked_merscope &&
-    ##     python "${__tool_directory__}/generate_image.py" ${prefix} raw merscope unpacked_merscope
+    #if $input_type_selector == "label_visium":
+        #if $file_type_selector_visium == "h5ad":
+            ln -s '$input_visium_h5ad' input.h5ad &&
+            python "${__tool_directory__}/generate_image.py" $prefix label visium input.h5ad
+        #elif $file_type_selector_visium == "zip":
+            mkdir unpacked_spaceranger &&
+            unzip $input_visium -d unpacked_spaceranger &&
+            python "${__tool_directory__}/generate_image.py" $prefix label visium unpacked_spaceranger
+        #end if
+    #elif $input_type_selector == "label_xenium":
+        mkdir unpacked_xenium &&
+        unzip $input_xenium -d unpacked_xenium &&
+        python "${__tool_directory__}/generate_image.py" $prefix label xenium unpacked_xenium
+    #elif $input_type_selector == "label_merscope":
+        mkdir unpacked_merscope &&
+        unzip $input_merscope_label -d unpacked_merscope &&
+        python "${__tool_directory__}/generate_image.py" $prefix label merscope unpacked_merscope
+    #elif $input_type_selector == "raw_merscope":
+        mkdir unpacked_merscope &&
+        unzip $input_merscope_label -d unpacked_merscope &&
+        python "${__tool_directory__}/generate_image.py" $prefix raw merscope unpacked_merscope
     #end if
     ]]></command>
     <inputs>
@@ -41,26 +37,37 @@
                 <option value="raw_merscope">Merscope data with raw tif files</option>
             </param>
             <when value="label_visium">
-                <param name="input_visium" type="data" format="h5ad" label="h5ad file or compressed Spaceranger output"/>
+                <conditional name="file_type_visium">
+                    <param name="file_type_selector_visium" type="select" label="Choose the type of input file">
+                        <option value="h5ad">h5ad file</option>
+                        <option value="zip">zip compressed Spaceranger output</option>
+                    </param>
+                    <when value="h5ad">
+                        <param name="input_visium_h5ad" type="data" format="h5ad" label="h5ad file"/>
+                    </when>
+                    <when value="zip">
+                        <param name="input_visium_zip" type="data" format="zip" label="zip compressed Spaceranger output"/>
+                    </when>
+                </conditional>
             </when>
             <when value="label_xenium">
-                <param name="input_xenium" type="data" format="gz,zip" label="Compressed Xenium output or cells.zarr.zip file"/>
+                <param name="input_xenium" type="data" format="zip" label="zip compressed Xenium output or cells.zarr.zip file"/>
             </when>
             <when value="label_merscope">
-                <param name="input_merscope_label" type="data" format="gz" label="Compressed MERSCOPE output"/>
+                <param name="input_merscope_label" type="data" format="zip" label="zip compressed MERSCOPE output"/>
             </when>
             <when value="raw_merscope">
-                <param name="input_merscope_raw" type="data" format="gz" label="Compressed MERSCOPE output"/>
+                <param name="input_merscope_raw" type="data" format="zip" label="zip compressed MERSCOPE output"/>
             </when>
         </conditional>
-        <param name="prefix" type="text" label="Enter a prefix for the output file(s)" optional="false" default_value="prefix"/>
+        <param name="prefix" type="text" label="Enter a prefix for the output file(s)" optional="false" value="prefix"/>
     </inputs>
     <outputs>
-        <data name="output_label" format="tif" label="${tool.name} on ${on_string}: label tif" from_work_dir="prefix-label.tif">
+        <data name="output_label" format="tiff" label="${tool.name} on ${on_string}: label tif" from_work_dir="prefix-label.tif">
             <filter>input_type['input_type_selector'] == 'label_visium' or input_type['input_type_selector'] == 'label_xenium' or input_type['input_type_selector'] == 'label_merscope'
             </filter>
         </data>
-        <data name="output_raw" format="tif" label="${tool.name} on ${on_string}: raw tif" from_work_dir="prefix-raw.tif">
+        <data name="output_raw" format="tiff" label="${tool.name} on ${on_string}: raw tif" from_work_dir="prefix-raw.tif">
             <filter>input_type['input_type_selector'] == 'raw_merscope'</filter>
         </data>
     </outputs>
