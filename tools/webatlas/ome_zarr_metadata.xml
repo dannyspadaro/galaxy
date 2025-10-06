@@ -1,0 +1,40 @@
+<tool id="webatlas_ome_zarr_metadata" name="Webatlas OME Zarr Metadata" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
+    <description>TODO description</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
+    <command detect_errors="exit_code"><![CDATA[
+        ln -s '$input_xml' input.xml &&
+        python "${__tool_directory__}/ome_zarr_metadata.py" input.xml > output.json
+    ]]></command>
+    <inputs>
+        <param name="input_xml" type="data" format="xml" label="xml file"/>
+    </inputs>
+    <outputs>
+        <data name="output_json" format="json" label="${tool.name} on ${on_string}" from_work_dir="output.json"/>
+    </outputs>
+    <tests>
+        <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->
+    </tests>
+    <help><![CDATA[
+
+.. class:: infomark
+
+**What it does**
+
+TODO: Fill in help in reStructuredText format (https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html)
+
+Usage
+.....
+
+
+**Input**
+
+
+**Output**
+
+
+    ]]></help>
+    <expand macro="citations"/>
+</tool>
