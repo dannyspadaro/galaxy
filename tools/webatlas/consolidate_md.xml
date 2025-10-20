@@ -24,7 +24,7 @@
         <param name="input_image" type="data" format="tiff,jpg" label="tif or jpg image"/>
     </inputs>
     <outputs>
-        <data name="output_zarr" format="zip" label="${tool.name} on ${on_string}: zarr output" from_work_dir="output.zarr.zip"/>
+        <data name="output_zarr" format="zarr.zip" label="${tool.name} on ${on_string}: zarr output" from_work_dir="output.zarr.zip"/>
     </outputs>
     <tests>
         <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->
