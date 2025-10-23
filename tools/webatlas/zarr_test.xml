@@ -1,0 +1,56 @@
+<tool id="zarr_test" name="Zarr Test" version="0.1.0+galaxy0" profile="23.0">
+    <description>test wrapper for zarr format</description>
+    <requirements>
+        <requirement type="package" version="2.18.3">zarr</requirement>
+        <requirement type="package" version="2024.9.0">s3fs</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+        python $script
+    ]]></command>
+    <configfiles>
+        <configfile name="script"><![CDATA[
+import zarr
+
+input_store = None
+if '$zarrinput.extension' == 'zarr':
+    print('Using local directory store as input')
+    # TODO: Is there a way for the dataset file to directly reference the extra_files_path?
+    # We need to append the store_root to the extra_files_path to get the full path to the zarr store
+    # in case it was extracted to a subdirectory
+    input_store = '$zarrinput.extra_files_path/$zarrinput.metadata.store_root'
+elif '$zarrinput.extension' == 'zarr.zip':
+    compression = int('$zarrinput.metadata.compression' or 0)
+    print(f'Using zipped store as input with compression {compression}')
+    # Currently only zip files containing the zarr store at the root (i.e. no subdirectories) are supported
+    input_store = zarr.ZipStore('$zarrinput', mode='r', compression=compression)
+else:
+    raise ValueError('Unsupported input format')
+
+if input_store is None:
+    raise ValueError('Unable to determine input store. Your input dataset may be an unsupported format')
+
+# Inspect the input zarr
+input_zarr = zarr.open(input_store, mode='r')
+print("Input zarr info:")
+print(f"  {input_zarr.info_items()}")
+
+# Create the output store where the new zarr will be written
+output_store = '$zarroutput.extra_files_path'
+output_zarr = zarr.open(output_store, mode='w')
+foo = output_zarr.create_group('foo')
+bar = foo.create_group('bar')
+baz = bar.zeros('baz', shape=(10000, 10000), chunks=(1000, 1000), dtype='i4')
+        ]]></configfile>
+    </configfiles>
+    <inputs>
+        <param name="zarrinput" type="data" format="zarr,zarr.zip" allow_uri_if_protocol="https" label="Zarr input"/>
+    </inputs>
+    <outputs>
+        <data name="zarroutput" format="zarr" label="${tool.name} on ${on_string}: New ZARR"/>
+    </outputs>
+    <help><![CDATA[
+
+simple wrapper to test zarr datatype
+
+    ]]></help>
+</tool>

@@ -14,6 +14,7 @@
     <tool file="webatlas/ome_zarr_metadata.xml"/>
     <tool file="webatlas/build_config.xml"/>
     <tool file="webatlas/write_spatialdata.xml"/>
+    <tool file="webatlas/zarr_test.xml"/>
   </section>
   <section id="getext" name="Get Data">
     <tool file="data_source/diced.xml" />
