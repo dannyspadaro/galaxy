@@ -8,28 +8,21 @@
         #if $input_type_selector == 'h5ad':
             ln -s '$input_h5ad' input.h5ad &&
             python "${__tool_directory__}/process_h5ad.py" input.h5ad $prefix &&
-            ##tar -czf output-anndata.zarr.tar.gz ${prefix}-anndata.zarr
             zip -r output-anndata.zarr.zip $prefix-anndata.zarr
         #elif $input_type_selector == 'spaceranger':
             mkdir unpacked_spaceranger &&
-            ##tar -xf '${input_spaceranger}' -C unpacked_spaceranger &&
             unzip $input_spaceranger -d unpacked_spaceranger &&
             python "${__tool_directory__}/process_spaceranger.py" unpacked_spaceranger $prefix &&
-            ##tar -czf output-anndata.zarr.tar.gz ${prefix}-anndata.zarr
             zip -r output-anndata.zarr.zip $prefix-anndata.zarr
         #elif $input_type_selector == 'xenium':
             mkdir unpacked_xenium &&
-            ##tar -xf '${input_xenium}' -C unpacked_xenium &&
             unzip $input_xenium -d unpacked_xenium &&
             python "${__tool_directory__}/process_xenium.py" unpacked_xenium $prefix &&
-            ##tar -czf output-anndata.zarr.tar.gz ${prefix}-anndata.zarr
             zip -r output-anndata.zarr.zip $prefix-anndata.zarr
         #elif $input_type_selector == 'merscope':
             mkdir unpacked_merscope &&
-            ##tar -xf '${input_merscope}' -C unpacked_merscope &&
             unzip $input_merscope -d unpacked_merscope &&
             python "${__tool_directory__}/process_merscope.py" unpacked_merscope $prefix &&
-            ##tar -czf output-anndata.zarr.tar.gz ${prefix}-anndata.zarr
             zip -r output-anndata.zarr.zip $prefix-anndata.zarr
         #elif $input_type_selector == 'molecules':
             python "${__tool_directory__}/process_molecules.py" '${input_molecules}' $prefix
@@ -63,7 +56,6 @@
         <param name="prefix" type="text" label="Enter a prefix for the output file(s)" optional="false" value="prefix"/>
     </inputs>
     <outputs>
-        <!-- <data name="output_zarr" format="tar.gz" label="${tool.name} on ${on_string}: zarr output" from_work_dir="output-anndata.zarr.tar.gz"></data> -->
         <!-- <data name="output_h5ad" format="h5ad" label="${tool.name} on ${on_string}: h5ad output" from_work_dir="tmp-testpref.h5ad"></data> -->
         <data name="output_zarr" format="zarr.zip" label="${tool.name} on ${on_string}: compressed zarr output"  from_work_dir="output-anndata.zarr.zip">
             <filter>input_type['input_type_selector'] == 'h5ad' or input_type['input_type_selector'] == 'spaceranger' or input_type['input_type_selector'] == 'xenium' or input_type['input_type_selector'] == 'merscope'

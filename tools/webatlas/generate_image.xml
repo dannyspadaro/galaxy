@@ -11,7 +11,7 @@
             python "${__tool_directory__}/generate_image.py" $prefix label visium input.h5ad
         #elif $file_type_selector_visium == "zip":
             mkdir unpacked_spaceranger &&
-            unzip $input_visium -d unpacked_spaceranger &&
+            unzip $input_visium_zip -d unpacked_spaceranger &&
             python "${__tool_directory__}/generate_image.py" $prefix label visium unpacked_spaceranger
         #end if
     #elif $input_type_selector == "label_xenium":
