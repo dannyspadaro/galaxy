@@ -3,7 +3,7 @@
     <macros>
         <import>macros.xml</import>
     </macros>
-    <expand macro="build_config_requirements"/>
+    <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[    
         ## TODO: figure out inputs, implement --options
         ln -s "$input_img_metadata_1" input_img_metadata_1.json &&
@@ -29,6 +29,14 @@
     </outputs>
     <tests>
         <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->
+        <test>
+            <param name="input_zarr" value="input_zarr.zarr.zip"/>
+            <section name="input_section_1">
+                <param name="input_img_1" value="input_img_1.zarr.zip"/>
+                <param name="input_img_metadata_1" value="input_img_metadata_1.json"/>
+            </section>
+            <output name="output_json" value="dummy.json"/>
+        </test>
     </tests>
     <help><![CDATA[
 
