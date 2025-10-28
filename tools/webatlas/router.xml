@@ -5,27 +5,28 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
+        ##TODO: implement adata option for 'h5ad'?
         #if $input_type_selector == 'h5ad':
             ln -s '$input_h5ad' input.h5ad &&
-            python "${__tool_directory__}/process_h5ad.py" input.h5ad $prefix &&
+            python "${__tool_directory__}/process_h5ad.py" --path input.h5ad --stem $prefix --chunk_size $chunk_size --batch_processing $batch_processing --batch_size $batch_size &&
             zip -r output-anndata.zarr.zip $prefix-anndata.zarr
         #elif $input_type_selector == 'spaceranger':
             mkdir unpacked_spaceranger &&
             unzip $input_spaceranger -d unpacked_spaceranger &&
-            python "${__tool_directory__}/process_spaceranger.py" unpacked_spaceranger $prefix &&
+            python "${__tool_directory__}/process_spaceranger.py" --path unpacked_spaceranger --stem $prefix --load_clusters $load_clusters --load_embeddings $load_embeddings --load_raw $load_raw --save_h5ad $save_h5ad &&
             zip -r output-anndata.zarr.zip $prefix-anndata.zarr
         #elif $input_type_selector == 'xenium':
             mkdir unpacked_xenium &&
             unzip $input_xenium -d unpacked_xenium &&
-            python "${__tool_directory__}/process_xenium.py" unpacked_xenium $prefix &&
+            python "${__tool_directory__}/process_xenium.py" --path unpacked_xenium --stem $prefix --spatial_as_pixel $spatial_as_pixel --resolution $resolution --save_h5ad $save_h5ad &&
             zip -r output-anndata.zarr.zip $prefix-anndata.zarr
         #elif $input_type_selector == 'merscope':
             mkdir unpacked_merscope &&
             unzip $input_merscope -d unpacked_merscope &&
-            python "${__tool_directory__}/process_merscope.py" unpacked_merscope $prefix &&
+            python "${__tool_directory__}/process_merscope.py" --path unpacked_merscope --stem $prefix --filter_prefix $filter_prefix --save_h5ad $save_h5ad &&
             zip -r output-anndata.zarr.zip $prefix-anndata.zarr
         #elif $input_type_selector == 'molecules':
-            python "${__tool_directory__}/process_molecules.py" '${input_molecules}' $prefix
+            python "${__tool_directory__}/process_molecules.py" --path '${input_molecules}' --stem $prefix --has_header --gene_col_name --x_col_name --y_col_name --delimiter --x_scale --y_scale --x_offset --y_offset --gene_col_idx --x_col_idx --y_col_idx --filter_col_name --filter_col_idx --filter_col_value
         #end if
     ]]></command>
     <inputs>
@@ -38,24 +39,44 @@
                 <option value="molecules">Molecules data in csv/tsv file</option>
             </param>
             <when value="h5ad">
+                <!-- TODO: remove "Defaults to True/False/value" inside help? -->
                 <param name="input_h5ad" type="data" format="h5ad" label="Anndata (h5ad) file"/>
+                <param name="chunk_size" type="integer" label="Output Zarr column chunk size. Defaults to 10." value="10" optional="true"/>
+                <!-- TODO: Somehow have batch_processing as a condition for batch_size? Might even make sense to not offer either as an option but instead enable by default for efficiency? -->
+                <param name="batch_processing" type="boolean" label="Batch processing" checked="false" help="If the expression matrix will be written to Zarr incrementally. Use to avoid loading the whole AnnData into memory. Defaults to False."/>
+                <param name="batch_size" type="integer" label="Batch size" value="10000" optional="true" help="The amount of rows (if matrix is in CSR format) or columns (if matrix is dense or in CSC format) of the expression matrix to process at a time when batch processing. Defaults to 10000."/>
             </when>
             <when value="spaceranger">
+                <!-- TODO: remove "Defaults to True/False" inside help? -->
                 <param name="input_spaceranger" type="data" format="zip" label="Compressed SpaceRanger output"/>
+                <param name="load_clusters" type="boolean" label="Include cluster files" checked="true" help="If cluster files should be included in the AnnData object. Defaults to True."/>
+                <param name="load_embeddings" type="boolean" label="Include embeddings" checked="true" help="If embedding coordinates files should be included in the AnnData object. Defaults to True."/>
+                <param name="load_raw" type="boolean" label="Use raw matrix count file" checked="false" help="If the raw matrix count file should be loaded instead of the filtered matrix. Defaults to False."/>
+                <param name="save_h5ad" type="boolean" label="Save h5ad file" checked="false" help="If the AnnData object should also be written to an h5ad file. Defaults to False."/>
             </when>
             <when value="xenium">
+                <!-- TODO: remove "Defaults to True/False" inside help? -->
                 <param name="input_xenium" type="data" format="zip" label="Compressed Xenium output"/>
+                <param name="spatial_as_pixel" type="boolean" label="Convert spatial coordinates to pixels" checked="true" help="Boolean indicating whether spatial coordinates should be converted to pixels. Defaults to True."/>
+                <!-- TODO: does resolution only apply when spatial_as_pixel is true? If yes, have spatial_as_pixel as condition? -->
+                <param name="resolution" type="float" label="Pixel resolution" value="0.2125" optional="true" help="Pixel resolution. Defaults to 0.2125."/>
+                <param name="save_h5ad" type="boolean" label="Save h5ad file" checked="false" help="If the AnnData object should also be written to an h5ad file. Defaults to False."/>
             </when>
             <when value="merscope">
+                <!-- TODO: remove "Defaults to True/False" inside help? -->
                 <param name="input_merscope" type="data" format="zip" label="Compressed MERSCOPE output"/>
+                <param name="filter_prefix" type="text" value="Blank-" label="Filter prefix" optional="true" help="Prefix to filter out of the data. Defaults to `Blank-`"/>
+                <param name="save_h5ad" type="boolean" label="Save h5ad file" checked="false" help="If the AnnData object should also be written to an h5ad file. Defaults to False."/>
             </when>
             <when value="molecules">
+                <!-- TODO: add missing parameters -->
                 <param name="input_molecules" type="data" format="csv,tsv" label="Molecules file"/>
             </when>
         </conditional>
         <param name="prefix" type="text" label="Enter a prefix for the output file(s)" optional="false" value="prefix"/>
     </inputs>
     <outputs>
+        <!-- TODO: add h5ad output -->
         <!-- <data name="output_h5ad" format="h5ad" label="${tool.name} on ${on_string}: h5ad output" from_work_dir="tmp-testpref.h5ad"></data> -->
         <data name="output_zarr" format="zarr.zip" label="${tool.name} on ${on_string}: compressed zarr output"  from_work_dir="output-anndata.zarr.zip">
             <filter>input_type['input_type_selector'] == 'h5ad' or input_type['input_type_selector'] == 'spaceranger' or input_type['input_type_selector'] == 'xenium' or input_type['input_type_selector'] == 'merscope'
