@@ -4,7 +4,6 @@
     <token name="@PROFILE_VERSION@">23.0</token>
     <xml name="requirements">
         <requirements>
-            
             <requirement type="package" version="1.35">tar</requirement>
             <requirement type="package" version="0.7.0">bioformats2raw</requirement>
             <requirement type="package" version="10.1.0">pillow</requirement>
@@ -28,9 +27,6 @@
             <requirement type="package" version="2.16.1">zarr</requirement>
             <requirement type="package" version="3.10.0">h5py</requirement>
             <requirement type="package" version="0.15.0">rioxarray</requirement>
-            <!-- <container type="docker">
-                quay.io/goeckslab/vitessce:3.5.1
-            </container> -->
         </requirements>
     </xml>
     <xml name="citations">

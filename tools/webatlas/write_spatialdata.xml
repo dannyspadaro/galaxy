@@ -3,7 +3,13 @@
     <macros>
         <import>macros.xml</import>
     </macros>
-    <expand macro="requirements"/>
+    <requirements>
+        <requirement type="package" version="0.5.0">fire</requirement>
+        <requirement type="package" version="2023.9.26">tifffile</requirement>
+        <requirement type="package" version="0.9.1">anndata</requirement>
+        <requirement type="package" version="0.15.0">rioxarray</requirement>
+        <requirement type="package" version="0.0.15">spatialdata</requirement>
+    </requirements>
     <command detect_errors="exit_code"><![CDATA[
         #if $input_type_selector == "h5ad":
             ln -s '$input_h5ad' input.h5ad &&

@@ -13,7 +13,9 @@
         #elif $input_type_selector == 'spaceranger':
             mkdir unpacked_spaceranger &&
             unzip $input_spaceranger -d unpacked_spaceranger &&
-            python "${__tool_directory__}/process_spaceranger.py" --path unpacked_spaceranger --stem $prefix --load_clusters $load_clusters --load_embeddings $load_embeddings --load_raw $load_raw --save_h5ad $save_h5ad &&
+            ## $load_raw currently leads to an error
+            ## python "${__tool_directory__}/process_spaceranger.py" --path unpacked_spaceranger --stem $prefix --load_clusters $load_clusters --load_embeddings $load_embeddings --load_raw $load_raw --save_h5ad $save_h5ad &&
+            python "${__tool_directory__}/process_spaceranger.py" --path unpacked_spaceranger --stem $prefix --load_clusters $load_clusters --load_embeddings $load_embeddings --save_h5ad $save_h5ad &&
             zip -r output-anndata.zarr.zip $prefix-anndata.zarr
         #elif $input_type_selector == 'xenium':
             mkdir unpacked_xenium &&
