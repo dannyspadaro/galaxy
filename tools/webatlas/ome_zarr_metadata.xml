@@ -5,36 +5,10 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
-    #if $input_type_selector == "zarr":
         python "${__tool_directory__}/ome_zarr_metadata.py" --xml_path '$input_zarr.extra_files_path/$input_zarr.metadata.store_root/OME/METADATA.ome.xml' > output.json
-    ##remove zarr.zip?
-    #elif $input_type_selector == "zarr.zip":
-        mkdir unpacked_zarr &&
-        unzip $input_zarr_zip -d unpacked_zarr &&
-        python "${__tool_directory__}/ome_zarr_metadata.py" unpacked_zarr/output.zarr/OME/METADATA.ome.xml > output.json
-    ##remove xml input too?
-    #elif $input_type_selector == "xml":
-        ln -s '$input_xml' input.xml &&
-        python "${__tool_directory__}/ome_zarr_metadata.py" input.xml > output.json
-    #end if
     ]]></command>
     <inputs>
-        <conditional name="input_type">
-            <param name="input_type_selector" type="select" label="Choose the type of input data">
-                <option value="zarr">zarr</option>
-                <option value="zarr.zip">zarr.zip</option>
-                <option value="xml">xml</option>
-            </param>
-            <when value="zarr">
-                <param name="input_zarr" type="data" format="zarr" label="zarr directory"/>
-            </when>
-            <when value="zarr.zip">
-                <param name="input_zarr_zip" type="data" format="zarr.zip" label="zipped zarr directory"/>
-            </when>
-            <when value="xml">
-                <param name="input_xml" type="data" format="xml" label="xml file"/>
-            </when>
-        </conditional>
+        <param name="input_zarr" type="data" format="zarr" label="zarr directory"/>
     </inputs>
     <outputs>
         <data name="output_json" format="json" label="${tool.name} on ${on_string}" from_work_dir="output.json"/>
