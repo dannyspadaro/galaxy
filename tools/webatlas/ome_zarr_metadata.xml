@@ -6,7 +6,7 @@
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
     #if $input_type_selector == "zarr":
-        python "${__tool_directory__}/ome_zarr_metadata.py" '$input_zarr.extra_files_path/$input_zarr.metadata.store_root/OME/METADATA.ome.xml' > output.json
+        python "${__tool_directory__}/ome_zarr_metadata.py" --xml_path '$input_zarr.extra_files_path/$input_zarr.metadata.store_root/OME/METADATA.ome.xml' > output.json
     ##remove zarr.zip?
     #elif $input_type_selector == "zarr.zip":
         mkdir unpacked_zarr &&

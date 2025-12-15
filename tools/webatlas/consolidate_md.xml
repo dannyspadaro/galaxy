@@ -17,7 +17,7 @@
         else
             bioformats2raw --no-hcs $input_image output.zarr;
         fi;
-        python "${__tool_directory__}/consolidate_md.py" output.zarr &&
+        python "${__tool_directory__}/consolidate_md.py" --file_in output.zarr &&
         zip -r output.zarr.zip output.zarr
     ]]></command>
     <inputs>

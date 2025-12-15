@@ -5,27 +5,28 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
+    ##TODO: add --ref_img and --args
     #if $input_type_selector == "label_visium":
         #if $file_type_selector_visium == "h5ad":
             ln -s '$input_visium_h5ad' input.h5ad &&
-            python "${__tool_directory__}/generate_image.py" $prefix label visium input.h5ad
+            python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type label --file_type visium --file_path input.h5ad
         #elif $file_type_selector_visium == "zip":
             mkdir unpacked_spaceranger &&
             unzip $input_visium_zip -d unpacked_spaceranger &&
-            python "${__tool_directory__}/generate_image.py" $prefix label visium unpacked_spaceranger
+            python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type label --file_type visium --file_path unpacked_spaceranger
         #end if
     #elif $input_type_selector == "label_xenium":
         mkdir unpacked_xenium &&
         unzip $input_xenium -d unpacked_xenium &&
-        python "${__tool_directory__}/generate_image.py" $prefix label xenium unpacked_xenium
+        python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type label --file_type xenium --file_path unpacked_xenium
     #elif $input_type_selector == "label_merscope":
         mkdir unpacked_merscope &&
         unzip $input_merscope_label -d unpacked_merscope &&
-        python "${__tool_directory__}/generate_image.py" $prefix label merscope unpacked_merscope
+        python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type label --file_type merscope --file_path unpacked_merscope
     #elif $input_type_selector == "raw_merscope":
         mkdir unpacked_merscope &&
         unzip $input_merscope_label -d unpacked_merscope &&
-        python "${__tool_directory__}/generate_image.py" $prefix raw merscope unpacked_merscope
+        python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type raw --file_type merscope --file_path unpacked_merscope
     #end if
     ]]></command>
     <inputs>

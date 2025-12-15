@@ -13,14 +13,16 @@
     <command detect_errors="exit_code"><![CDATA[
         #if $input_type_selector == "h5ad":
             ln -s '$input_h5ad' input.h5ad &&
-            ##ln -s '$input_raw_img' input_raw.tif &&
-            ln -s '$input_label_img' input_label.tif &&
-            python "${__tool_directory__}/write_spatialdata.py" input.h5ad $prefix --label_img_path input_label.tif
-        #elif $input_type_selector == "zarr":
-            ln -s '$input_zarr' input.zarr &&
+            ## skip following 1/2 lines with if-statement when respective input is None?
             ln -s '$input_raw_img' input_raw.tif &&
             ln -s '$input_label_img' input_label.tif &&
-            python "${__tool_directory__}/write_spatialdata.py" input.zarr $prefix --raw_img_path input_raw.tif --label_img_path input_label.tif
+            python "${__tool_directory__}/write_spatialdata.py" --anndata_path input.h5ad --stem $prefix --raw_img_path input_raw.tif --label_img_path input_label.tif
+        #elif $input_type_selector == "zarr":
+            ln -s '$input_zarr' input.zarr &&
+            ## skip following 1/2 lines with if-statement when respective input is None?
+            ln -s '$input_raw_img' input_raw.tif &&
+            ln -s '$input_label_img' input_label.tif &&
+            python "${__tool_directory__}/write_spatialdata.py" --anndata_path input.zarr --stem $prefix --raw_img_path input_raw.tif --label_img_path input_label.tif
         #end if
     ]]></command>
     <inputs>
