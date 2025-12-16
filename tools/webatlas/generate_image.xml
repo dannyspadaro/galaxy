@@ -74,6 +74,29 @@
     </outputs>
     <tests>
         <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->
+    <test expect_num_outputs="1">
+        <param name="prefix" value="prefix"/>
+        <conditional name="input_type">
+            <param name="input_type_selector" value="label_visium"/>
+            <conditional name="file_type_visium">
+                <param name="file_type_selector_visium" value="h5ad"/>
+                <param name="input_visium_h5ad" value="input.h5ad"/>
+            </conditional>
+        </conditional>
+        <output name="output_label" value="prefix-label.tif"/>
+    </test>
+    
+    <test expect_num_outputs="1">
+        <param name="prefix" value="prefix"/>
+        <conditional name="input_type">
+            <param name="input_type_selector" value="label_visium"/>
+            <conditional name="file_type_visium">
+                <param name="file_type_selector_visium" value="zip"/>
+                <param name="input_visium_zip" value="spaceranger.zip"/>
+            </conditional>
+        </conditional>
+        <output name="output_label" value="prefix-label.tif"/>
+    </test>
     </tests>
     <help><![CDATA[
 

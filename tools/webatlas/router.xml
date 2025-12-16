@@ -90,7 +90,17 @@
     </outputs>
     <tests>
         <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->
-         
+    <test expect_num_outputs="1">
+        <param name="prefix" value="prefix"/>
+        <conditional name="input_type">
+            <param name="input_type_selector" value="h5ad"/>
+            <param name="input_h5ad" value="input.h5ad"/>
+            <param name="chunk_size" value="10"/>
+            <param name="batch_processing" value="false"/>
+            <param name="batch_size" value="10000"/>
+        </conditional>
+        <output name="output_zarr" value="output-anndata.zarr.zip"/>
+    </test>
     </tests>
     <help><![CDATA[
 

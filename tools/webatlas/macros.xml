@@ -5,7 +5,7 @@
     <xml name="requirements">
         <requirements>
             <requirement type="package" version="1.35">tar</requirement>
-            <requirement type="package" version="0.7.0">bioformats2raw</requirement>
+            <!-- <requirement type="package" version="0.7.0">bioformats2raw</requirement> -->
             <requirement type="package" version="10.1.0">pillow</requirement>
             <requirement type="package" version="2.5.0">xmlschema</requirement>
             <!-- <requirement type="package" version="23.2.1">pip</requirement> -->
@@ -13,11 +13,11 @@
             <requirement type="package" version="0.5.0">fire</requirement>
             <requirement type="package" version="2023.10.3">regex</requirement>
             <requirement type="package" version="0.22.0">scikit-image</requirement>
-            <requirement type="package" version="0.7.0">bioformats2raw-libs</requirement>
-            <requirement type="package" version="0.5.0=0">raw2ometiff-libs</requirement>
-            <requirement type="package" version="2023.9.26">tifffile</requirement>
+            <!-- <requirement type="package" version="0.7.0">bioformats2raw-libs</requirement> -->
+            <!-- <requirement type="package" version="0.5.0=0">raw2ometiff-libs</requirement> -->
+            <!-- <requirement type="package" version="2023.9.26">tifffile</requirement> -->
             <requirement type="package" version="1.24.4">numpy</requirement>
-            <requirement type="package" version="0.5.0=0">raw2ometiff</requirement>
+            <!-- <requirement type="package" version="0.5.0=0">raw2ometiff</requirement> -->
             <requirement type="package" version="2.1.0">pandas</requirement>
             <requirement type="package" version="2.2.1">pyvips</requirement>
             <requirement type="package" version="1.9.4">scanpy</requirement>

@@ -30,18 +30,36 @@
         <param name="config_filename_suffix" type="text" label="Config filename suffix" value="config.json" help="Defaults to 'config.json'."/>
     </inputs>
     <outputs>
-        <data name="output_json" format="json" label="${tool.name} on ${on_string}: $project-$dataset-$config_filename_suffix" from_work_dir="visium-breast-cancer-config.json"/>
+        <data name="output_json" format="json" label="${tool.name} on ${on_string}: $project-$dataset-$config_filename_suffix" from_work_dir="project-dataset-config.json"/>
     </outputs>
     <tests>
         <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->
+        
         <test>
             <param name="input_zarr" value="input_zarr.zarr.zip"/>
             <section name="input_section_1">
                 <param name="input_img_1" value="input_img_1.zarr.zip"/>
                 <param name="input_img_metadata_1" value="input_img_metadata_1.json"/>
             </section>
-            <output name="output_json" value="dummy.json"/>
+            <output name="output_json" value="project-dataset-config.json"/>
         </test>
+    <test expect_num_outputs="1">
+        <!--TODO: auto-generated test case. Please fill in the required values-->
+        <param name="input_zarr" value="input_zarr.zarr.zip"/>
+        <param name="project" value="project"/>
+        <param name="dataset" value="dataset"/>
+        <param name="url" value="test_url"/>
+        <param name="options" value=""/>
+        <param name="layout" value="minimal"/>
+        <param name="custom_layout" value=""/>
+        <param name="title" value="test_title"/>
+        <param name="config_filename_suffix" value="config.json"/>
+        <section name="input_section_1">
+            <param name="input_img_1" value="input_img_1.zarr.zip"/>
+            <param name="input_img_metadata_1" value="input_img_metadata_1.json"/>
+        </section>
+        <output name="output_json" value="project-dataset-config.json"/>
+    </test>
     </tests>
     <help><![CDATA[
 
