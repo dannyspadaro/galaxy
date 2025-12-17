@@ -38,7 +38,8 @@
                 <option value="spaceranger">SpaceRanger output</option>
                 <option value="xenium">Xenium output</option>
                 <option value="merscope">MERSCOPE output</option>
-                <option value="molecules">Molecules data in csv/tsv file</option>
+                <!-- currently there is no usecase for this option. It can be implemented on request -->
+                <!--<option value="molecules">Molecules data in csv/tsv file</option>-->
             </param>
             <when value="h5ad">
                 <!-- TODO: remove "Defaults to True/False/value" inside help? -->
@@ -95,7 +96,7 @@
         <conditional name="input_type">
             <param name="input_type_selector" value="h5ad"/>
             <param name="input_h5ad" value="input.h5ad"/>
-            <param name="chunk_size" value="10"/>
+            <param name="chunk_size" value="100"/>
             <param name="batch_processing" value="false"/>
             <param name="batch_size" value="10000"/>
         </conditional>
