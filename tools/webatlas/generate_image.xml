@@ -9,24 +9,29 @@
     #if $input_type_selector == "label_visium":
         #if $file_type_selector_visium == "h5ad":
             ln -s '$input_visium_h5ad' input.h5ad &&
-            python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type label --file_type visium --file_path input.h5ad
+            python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type label --file_type visium --file_path input.h5ad &&
+            mv $prefix-label.tif $output_label
         #elif $file_type_selector_visium == "zip":
             mkdir unpacked_spaceranger &&
             unzip $input_visium_zip -d unpacked_spaceranger &&
-            python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type label --file_type visium --file_path unpacked_spaceranger
+            python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type label --file_type visium --file_path unpacked_spaceranger &&
+            mv $prefix-label.tif $output_label
         #end if
     #elif $input_type_selector == "label_xenium":
         mkdir unpacked_xenium &&
         unzip $input_xenium -d unpacked_xenium &&
-        python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type label --file_type xenium --file_path unpacked_xenium
+        python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type label --file_type xenium --file_path unpacked_xenium &&
+        mv $prefix-label.tif $output_label
     #elif $input_type_selector == "label_merscope":
         mkdir unpacked_merscope &&
         unzip $input_merscope_label -d unpacked_merscope &&
-        python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type label --file_type merscope --file_path unpacked_merscope
+        python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type label --file_type merscope --file_path unpacked_merscope &&
+        mv $prefix-label.tif $output_label
     #elif $input_type_selector == "raw_merscope":
         mkdir unpacked_merscope &&
         unzip $input_merscope_label -d unpacked_merscope &&
-        python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type raw --file_type merscope --file_path unpacked_merscope
+        python "${__tool_directory__}/generate_image.py" --stem $prefix --img_type raw --file_type merscope --file_path unpacked_merscope &&
+        mv $prefix-raw.tif $output_raw
     #end if
     ]]></command>
     <inputs>
@@ -64,18 +69,18 @@
         <param name="prefix" type="text" label="Enter a prefix for the output file(s)" optional="false" value="prefix"/>
     </inputs>
     <outputs>
-        <data name="output_label" format="tiff" label="${tool.name} on ${on_string}: label tif" from_work_dir="prefix-label.tif">
+        <data name="output_label" format="tiff" label="${tool.name} on ${on_string}: label tif">
             <filter>input_type['input_type_selector'] == 'label_visium' or input_type['input_type_selector'] == 'label_xenium' or input_type['input_type_selector'] == 'label_merscope'
             </filter>
         </data>
-        <data name="output_raw" format="tiff" label="${tool.name} on ${on_string}: raw tif" from_work_dir="prefix-raw.tif">
+        <data name="output_raw" format="tiff" label="${tool.name} on ${on_string}: raw tif">
             <filter>input_type['input_type_selector'] == 'raw_merscope'</filter>
         </data>
     </outputs>
     <tests>
         <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->
     <test expect_num_outputs="1">
-        <param name="prefix" value="prefix"/>
+        <param name="prefix" value="h5ad"/>
         <conditional name="input_type">
             <param name="input_type_selector" value="label_visium"/>
             <conditional name="file_type_visium">
@@ -83,11 +88,15 @@
                 <param name="input_visium_h5ad" value="input.h5ad"/>
             </conditional>
         </conditional>
-        <output name="output_label" value="prefix-label.tif"/>
+        <output name="output_label">
+            <assert_contents>
+                <has_size value="841661656" delta="100"/>
+            </assert_contents>
+        </output>
     </test>
     
     <test expect_num_outputs="1">
-        <param name="prefix" value="prefix"/>
+        <param name="prefix" value="spaceranger"/>
         <conditional name="input_type">
             <param name="input_type_selector" value="label_visium"/>
             <conditional name="file_type_visium">
@@ -95,7 +104,11 @@
                 <param name="input_visium_zip" value="spaceranger.zip"/>
             </conditional>
         </conditional>
-        <output name="output_label" value="prefix-label.tif"/>
+        <output name="output_label">
+            <assert_contents>
+                <has_size value="841661656" delta="100"/>
+            </assert_contents>
+        </output>
     </test>
     </tests>
     <help><![CDATA[
