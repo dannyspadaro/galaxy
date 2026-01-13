@@ -56,34 +56,30 @@
                 <!-- <option value="molecules">Molecules data in csv/tsv file</option> -->
             </param>
             <when value="h5ad">
-                <!-- TODO: remove "Defaults to True/False/value" inside help? -->
                 <param name="input_h5ad" type="data" format="h5ad" label="Anndata (h5ad) file"/>
-                <param name="chunk_size" type="integer" label="Output Zarr column chunk size. Defaults to 10." value="10" optional="true"/>
+                <param name="chunk_size" type="integer" label="Output Zarr column chunk size." value="10" optional="true"/>
                 <!-- TODO: Somehow have batch_processing as a condition for batch_size? Might even make sense to not offer either as an option but instead enable by default for efficiency? -->
-                <param name="batch_processing" type="boolean" label="Batch processing" checked="false" help="If the expression matrix will be written to Zarr incrementally. Use to avoid loading the whole AnnData into memory. Defaults to False."/>
-                <param name="batch_size" type="integer" label="Batch size" value="10000" optional="true" help="The amount of rows (if matrix is in CSR format) or columns (if matrix is dense or in CSC format) of the expression matrix to process at a time when batch processing. Defaults to 10000."/>
+                <param name="batch_processing" type="boolean" label="Batch processing" checked="false" help="If the expression matrix will be written to Zarr incrementally. Use to avoid loading the whole AnnData into memory."/>
+                <param name="batch_size" type="integer" label="Batch size" value="10000" optional="true" help="The amount of rows (if matrix is in CSR format) or columns (if matrix is dense or in CSC format) of the expression matrix to process at a time when batch processing."/>
             </when>
             <when value="spaceranger">
-                <!-- TODO: remove "Defaults to True/False" inside help? -->
                 <param name="input_spaceranger" type="data" format="zip" label="Compressed SpaceRanger output"/>
-                <param name="load_clusters" type="boolean" label="Include cluster files" checked="true" help="If cluster files should be included in the AnnData object. Defaults to True."/>
-                <param name="load_embeddings" type="boolean" label="Include embeddings" checked="true" help="If embedding coordinates files should be included in the AnnData object. Defaults to True."/>
-                <param name="load_raw" type="boolean" label="Use raw matrix count file" checked="false" help="If the raw matrix count file should be loaded instead of the filtered matrix. Defaults to False."/>
-                <param name="save_h5ad" type="boolean" label="Save h5ad file" checked="false" help="If the AnnData object should also be written to an h5ad file. Defaults to False."/>
+                <param name="load_clusters" type="boolean" label="Include cluster files" checked="true" help="If cluster files should be included in the AnnData object."/>
+                <param name="load_embeddings" type="boolean" label="Include embeddings" checked="true" help="If embedding coordinates files should be included in the AnnData object."/>
+                <param name="load_raw" type="boolean" label="Use raw matrix count file" checked="false" help="If the raw matrix count file should be loaded instead of the filtered matrix."/>
+                <param name="save_h5ad" type="boolean" label="Save h5ad file" checked="false" help="If the AnnData object should also be written to an h5ad file."/>
             </when>
             <when value="xenium">
-                <!-- TODO: remove "Defaults to True/False" inside help? -->
                 <param name="input_xenium" type="data" format="zip" label="Compressed Xenium output"/>
-                <param name="spatial_as_pixel" type="boolean" label="Convert spatial coordinates to pixels" checked="true" help="Boolean indicating whether spatial coordinates should be converted to pixels. Defaults to True."/>
+                <param name="spatial_as_pixel" type="boolean" label="Convert spatial coordinates to pixels" checked="true" help="Boolean indicating whether spatial coordinates should be converted to pixels."/>
                 <!-- TODO: does resolution only apply when spatial_as_pixel is true? If yes, have spatial_as_pixel as condition? -->
-                <param name="resolution" type="float" label="Pixel resolution" value="0.2125" optional="true" help="Pixel resolution. Defaults to 0.2125."/>
-                <param name="save_h5ad" type="boolean" label="Save h5ad file" checked="false" help="If the AnnData object should also be written to an h5ad file. Defaults to False."/>
+                <param name="resolution" type="float" label="Pixel resolution" value="0.2125" optional="true" help="Pixel resolution."/>
+                <param name="save_h5ad" type="boolean" label="Save h5ad file" checked="false" help="If the AnnData object should also be written to an h5ad file."/>
             </when>
             <when value="merscope">
-                <!-- TODO: remove "Defaults to True/False" inside help? -->
                 <param name="input_merscope" type="data" format="zip" label="Compressed MERSCOPE output"/>
-                <param name="filter_prefix" type="text" value="Blank-" label="Filter prefix" optional="true" help="Prefix to filter out of the data. Defaults to `Blank-`"/>
-                <param name="save_h5ad" type="boolean" label="Save h5ad file" checked="false" help="If the AnnData object should also be written to an h5ad file. Defaults to False."/>
+                <param name="filter_prefix" type="text" value="Blank-" label="Filter prefix" optional="true" help="Prefix to filter out of the data."/>
+                <param name="save_h5ad" type="boolean" label="Save h5ad file" checked="false" help="If the AnnData object should also be written to an h5ad file."/>
             </when>
             <!-- <when value="molecules">
                 <param name="input_molecules" type="data" format="csv,tsv" label="Molecules file"/>
