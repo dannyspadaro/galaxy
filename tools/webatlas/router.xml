@@ -5,7 +5,7 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
-        ##TODO: implement adata option for 'h5ad'?
+        ##TODO: implement adata option for 'h5ad'
         #if $input_type_selector == 'h5ad':
             ln -s '$input_h5ad' input.h5ad &&
             python "${__tool_directory__}/process_h5ad.py" --path input.h5ad --stem $prefix --chunk_size $chunk_size --batch_processing $batch_processing --batch_size $batch_size &&
@@ -59,22 +59,22 @@
                 <param name="input_h5ad" type="data" format="h5ad" label="Anndata (h5ad) file"/>
                 <param name="chunk_size" type="integer" label="Output Zarr column chunk size." value="10" optional="true"/>
                 <!-- TODO: Somehow have batch_processing as a condition for batch_size? Might even make sense to not offer either as an option but instead enable by default for efficiency? -->
-                <param name="batch_processing" type="boolean" label="Batch processing" checked="false" help="If the expression matrix will be written to Zarr incrementally. Use to avoid loading the whole AnnData into memory."/>
-                <param name="batch_size" type="integer" label="Batch size" value="10000" optional="true" help="The amount of rows (if matrix is in CSR format) or columns (if matrix is dense or in CSC format) of the expression matrix to process at a time when batch processing."/>
+                <param name="batch_processing" type="boolean" label="Batch processing" optional="true" checked="false" help="If the expression matrix will be written to Zarr incrementally. Use to avoid loading the whole AnnData into memory."/>
+                <param name="batch_size" type="integer" label="Batch size" optional="true" value="10000" help="The amount of rows (if matrix is in CSR format) or columns (if matrix is dense or in CSC format) of the expression matrix to process at a time when batch processing."/>
             </when>
             <when value="spaceranger">
                 <param name="input_spaceranger" type="data" format="zip" label="Compressed SpaceRanger output"/>
-                <param name="load_clusters" type="boolean" label="Include cluster files" checked="true" help="If cluster files should be included in the AnnData object."/>
-                <param name="load_embeddings" type="boolean" label="Include embeddings" checked="true" help="If embedding coordinates files should be included in the AnnData object."/>
-                <param name="load_raw" type="boolean" label="Use raw matrix count file" checked="false" help="If the raw matrix count file should be loaded instead of the filtered matrix."/>
-                <param name="save_h5ad" type="boolean" label="Save h5ad file" checked="false" help="If the AnnData object should also be written to an h5ad file."/>
+                <param name="load_clusters" type="boolean" label="Include cluster files" optional="true" checked="true" help="If cluster files should be included in the AnnData object."/>
+                <param name="load_embeddings" type="boolean" label="Include embeddings" optional="true" checked="true" help="If embedding coordinates files should be included in the AnnData object."/>
+                <param name="load_raw" type="boolean" label="Use raw matrix count file" optional="true" checked="false" help="If the raw matrix count file should be loaded instead of the filtered matrix."/>
+                <param name="save_h5ad" type="boolean" label="Save h5ad file" optional="true" checked="false" help="If the AnnData object should also be written to an h5ad file."/>
             </when>
             <when value="xenium">
                 <param name="input_xenium" type="data" format="zip" label="Compressed Xenium output"/>
-                <param name="spatial_as_pixel" type="boolean" label="Convert spatial coordinates to pixels" checked="true" help="Boolean indicating whether spatial coordinates should be converted to pixels."/>
+                <param name="spatial_as_pixel" type="boolean" label="Convert spatial coordinates to pixels" optional="true" checked="true" help="Boolean indicating whether spatial coordinates should be converted to pixels."/>
                 <!-- TODO: does resolution only apply when spatial_as_pixel is true? If yes, have spatial_as_pixel as condition? -->
-                <param name="resolution" type="float" label="Pixel resolution" value="0.2125" optional="true" help="Pixel resolution."/>
-                <param name="save_h5ad" type="boolean" label="Save h5ad file" checked="false" help="If the AnnData object should also be written to an h5ad file."/>
+                <param name="resolution" type="float" label="Pixel resolution" optional="true" value="0.2125" help="Pixel resolution."/>
+                <param name="save_h5ad" type="boolean" label="Save h5ad file" optional="true" checked="false" help="If the AnnData object should also be written to an h5ad file."/>
             </when>
             <when value="merscope">
                 <param name="input_merscope" type="data" format="zip" label="Compressed MERSCOPE output"/>

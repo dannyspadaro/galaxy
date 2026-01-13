@@ -1,0 +1,57 @@
+<tool id="webatlas_bioformats2raw" name="Webatlas bioformats2raw" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
+    <description>TODO description</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <requirements>
+        <!-- <requirement type="package" version="2.16.1">zarr</requirement> -->
+        <requirement type="package" version="2023.9.26">tifffile</requirement>
+        <requirement type="package" version="0.7.0">bioformats2raw</requirement>
+        <requirement type="package" version="0.7.0">bioformats2raw-libs</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+        if tiffinfo $input_image | grep "Compression Scheme:" | grep -wq "JPEG";
+        then
+            if od -h -j2 -N2 $input_image | head -n1 | sed 's/[0-9]*  *//' | grep -q -E '002b|2b00';
+            then
+                tiffcp -c none -m 0 -8 $input_image uncompressed.tif;
+            else
+                tiffcp -c none -m 0 $input_image uncompressed.tif || tiffcp -c none -m 0 -8 $input_image uncompressed.tif;
+            fi;
+                bioformats2raw --no-hcs uncompressed.tif output.zarr;
+        else
+            bioformats2raw --no-hcs $input_image output.zarr;
+        fi;
+        zip -r output.zarr.zip output.zarr &&
+        mv output.zarr.zip $output_zarr
+    ]]></command>
+    <inputs>
+        <param name="input_image" type="data" format="tiff,jpg" label="tif or jpg image"/>
+    </inputs>
+    <outputs>
+        <data name="output_zarr" format="zarr.zip" label="${tool.name} on ${on_string}: zarr output"/>
+    </outputs>
+    <tests>
+        <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->
+    </tests>
+    <help><![CDATA[
+
+.. class:: infomark
+
+**What it does**
+
+TODO: Fill in help in reStructuredText format (https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html)
+
+Usage
+.....
+
+
+**Input**
+
+
+**Output**
+
+
+    ]]></help>
+    <expand macro="citations"/>
+</tool>
