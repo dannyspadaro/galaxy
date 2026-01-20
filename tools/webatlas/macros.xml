@@ -22,8 +22,57 @@
             <requirement type="package" version="0.15.0">rioxarray</requirement>
         </requirements>
     </xml>
+    <token name="@H5AD_TO_ZARR_COMMAND_BLOCK@"><![CDATA[
+        --chunk_size $chunk_size
+        #if $compute_embeddings:
+            --compute_embeddings
+        #end if
+        #if $var_index:
+            --var_index '$var_index'
+        #end if
+        #if $obs_subset_conditional.obs_subset:
+            --obs_subset '$obs_subset_column' '$obs_subset_values.split(",")'
+        #end if
+        #if $var_subset_conditional.var_subset:
+            --var_subset '$var_subset_column' '$var_subset_values.split(",")'
+        #end if
+        #if $batch_processing_conditional.batch_processing:
+            --batch processing
+            --batch_size $batch_size
+        #end if
+        &&
+        ]]>
+    </token>
     <xml name="stem">
         <param name="stem" type="text" label="Enter a prefix for the output file(s)" optional="false"/>
+    </xml>
+    <xml name="save_h5ad">
+        <param name="save_h5ad" type="boolean" label="Save h5ad file" checked="false" help="If the AnnData object should also be written to an h5ad file."/>
+    </xml>
+    <xml name="h5ad_to_zarr_parameters">
+        <param name="chunk_size" type="integer" label="Output Zarr column chunk size." value="10" min="1"/>
+        <param name="compute_embeddings" type="boolean" label="Compute embeddings" optional="true" checked="false" help="If `X_umap` and `X_pca` embeddings will be computed."/>
+        <param name="var_index" type="text" label="Alternative var index" optional="true" help="Alternative `var` column name with `var` names to be used in the visualization."/>
+        <conditional name="obs_subset_conditional">
+            <param name="obs_subset" type="boolean" label="Subset obs" checked="false" help="Subset the AnnData object on a specific 'obs' column with one or more values."/>
+            <when value="true">
+                <param name="obs_subset_column" type="text" label="obs column name" optional="false" help="obs column to apply the subset on."/>
+                <param name="obs_subset_values" type="text" label="Allowed values" optional="false" help="Comma-separated list of allowed values."/>
+            </when>
+        </conditional>
+        <conditional name="var_subset_conditional">
+            <param name="var_subset" type="boolean" label="Subset var" checked="false" help="Subset the AnnData object on a specific 'var' column with one or more values."/>
+            <when value="true">
+                <param name="var_subset_column" type="text" label="var column name" optional="false" help="var column to apply the subset on."/>
+                <param name="var_subset_values" type="text" label="Allowed values" optional="false" help="Comma-separated list of allowed values."/>
+            </when>
+        </conditional>
+        <conditional name="batch_processing_conditional">
+            <param name="batch_processing" type="boolean" label="Enable batch processing" checked="false" help="If the expression matrix will be written to Zarr incrementally. Use to avoid loading the whole AnnData into memory."/>
+            <when value="true">
+                <param name="batch_size" type="integer" label="Batch size" value="10000" min="1" help="The amount of rows (if matrix is in CSR format) or columns (if matrix is dense or in CSC format) of the expression matrix to process at a time when batch processing."/>
+            </when>
+        </conditional>
     </xml>
     <xml name="citations">
         <citations>
