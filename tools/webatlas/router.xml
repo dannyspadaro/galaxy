@@ -5,50 +5,66 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
-        ##TODO: implement adata option for 'h5ad'
         #if $input_type_selector == 'h5ad':
             ln -s '$input_h5ad' input.h5ad &&
-            python "${__tool_directory__}/process_h5ad.py" --path input.h5ad --stem $prefix --chunk_size $chunk_size --batch_processing $batch_processing --batch_size $batch_size &&
-            zip -r $prefix-anndata.zarr.zip $prefix-anndata.zarr &&
-            mv $prefix-anndata.zarr.zip $output_zarr
+            python "${__tool_directory__}/process_h5ad.py" --path input.h5ad --stem $stem --chunk_size $chunk_size
+            #if $compute_embeddings:
+                --compute_embeddings
+            #end if
+            #if $var_index:
+                --var_index '$var_index'
+            #end if
+            #if $obs_subset_conditional.obs_subset:
+                --obs_subset '$obs_subset_column' '$obs_subset_values.split(",")'
+            #end if
+            #if $var_subset_conditional.var_subset:
+                --var_subset '$var_subset_column' '$var_subset_values.split(",")'
+            #end if
+            #if $batch_processing_conditional.batch_processing:
+                --batch processing
+                --batch_size $batch_size
+            #end if
+            &&
+            zip -r $stem-anndata.zarr.zip $stem-anndata.zarr &&
+            mv $stem-anndata.zarr.zip $output_zarr
         #elif $input_type_selector == 'spaceranger':
             mkdir unpacked_spaceranger &&
             unzip $input_spaceranger -d unpacked_spaceranger &&
             ## $load_raw currently leads to an error
-            ## python "${__tool_directory__}/process_spaceranger.py" --path unpacked_spaceranger --stem $prefix --load_clusters $load_clusters --load_embeddings $load_embeddings --load_raw $load_raw --save_h5ad $save_h5ad &&
-            python "${__tool_directory__}/process_spaceranger.py" --path unpacked_spaceranger --stem $prefix --load_clusters $load_clusters --load_embeddings $load_embeddings --save_h5ad $save_h5ad &&
+            ## python "${__tool_directory__}/process_spaceranger.py" --path unpacked_spaceranger --stem $stem --load_clusters $load_clusters --load_embeddings $load_embeddings --load_raw $load_raw --save_h5ad $save_h5ad &&
+            python "${__tool_directory__}/process_spaceranger.py" --path unpacked_spaceranger --stem $stem --load_clusters $load_clusters --load_embeddings $load_embeddings --save_h5ad $save_h5ad &&
             #if $save_h5ad:
-                mv tmp-'$prefix'.h5ad $output_h5ad &&
+                mv tmp-'$stem'.h5ad $output_h5ad &&
             #end if
-            zip -r $prefix-anndata.zarr.zip $prefix-anndata.zarr &&
-            mv $prefix-anndata.zarr.zip $output_zarr
+            zip -r $stem-anndata.zarr.zip $stem-anndata.zarr &&
+            mv $stem-anndata.zarr.zip $output_zarr
         #elif $input_type_selector == 'xenium':
             mkdir unpacked_xenium &&
             unzip $input_xenium -d unpacked_xenium &&
-            python "${__tool_directory__}/process_xenium.py" --path unpacked_xenium --stem $prefix --spatial_as_pixel $spatial_as_pixel --resolution $resolution --save_h5ad $save_h5ad &&
+            python "${__tool_directory__}/process_xenium.py" --path unpacked_xenium --stem $stem --spatial_as_pixel $spatial_as_pixel --resolution $resolution --save_h5ad $save_h5ad &&
             #if $save_h5ad:
-                mv tmp-'$prefix'.h5ad $output_h5ad &&
+                mv tmp-'$stem'.h5ad $output_h5ad &&
             #end if
-            zip -r $prefix-anndata.zarr.zip $prefix-anndata.zarr &&
-            mv $prefix-anndata.zarr.zip $output_zarr
+            zip -r $stem-anndata.zarr.zip $stem-anndata.zarr &&
+            mv $stem-anndata.zarr.zip $output_zarr
         #elif $input_type_selector == 'merscope':
             mkdir unpacked_merscope &&
             unzip $input_merscope -d unpacked_merscope &&
-            python "${__tool_directory__}/process_merscope.py" --path unpacked_merscope --stem $prefix --filter_prefix $filter_prefix --save_h5ad $save_h5ad &&
+            python "${__tool_directory__}/process_merscope.py" --path unpacked_merscope --stem $stem --filter_prefix $filter_prefix --save_h5ad $save_h5ad &&
             #if $save_h5ad:
-                mv tmp-'$prefix'.h5ad $output_h5ad &&
+                mv tmp-'$stem'.h5ad $output_h5ad &&
             #end if
-            zip -r $prefix-anndata.zarr.zip $prefix-anndata.zarr &&
-            mv $prefix-anndata.zarr.zip $output_zarr
+            zip -r $stem-anndata.zarr.zip $stem-anndata.zarr &&
+            mv $stem-anndata.zarr.zip $output_zarr
         ## #elif $input_type_selector == 'molecules':
-        ##     python "${__tool_directory__}/process_molecules.py" --path $input_molecules --stem $prefix --has_header $has_header --gene_col_name $gene_col_name --x_col_name $x_col_name --y_col_name $y_col_name --delimiter $delimiter --x_scale $x_scale --y_scale $y_scale --x_offset $x_offset --y_offset $y_offset --gene_col_idx $gene_col_idx --x_col_idx $x_col_idx --y_col_idx $y_col_idx --filter_col_name $filter_col_name --filter_col_idx $filter_col_idx --filter_col_value $filter_col_value &&
-        ##     mv '$prefix'*.json $output_json
+        ##     python "${__tool_directory__}/process_molecules.py" --path $input_molecules --stem $stem --has_header $has_header --gene_col_name $gene_col_name --x_col_name $x_col_name --y_col_name $y_col_name --delimiter $delimiter --x_scale $x_scale --y_scale $y_scale --x_offset $x_offset --y_offset $y_offset --gene_col_idx $gene_col_idx --x_col_idx $x_col_idx --y_col_idx $y_col_idx --filter_col_name $filter_col_name --filter_col_idx $filter_col_idx --filter_col_value $filter_col_value &&
+        ##     mv '$stem'*.json $output_json
         #end if
     ]]></command>
     <inputs>
         <conditional name="input_type">
             <param name="input_type_selector" type="select" label="Choose the type of input data" help="">
-                <option value="h5ad">AnnData (h5ad) file</option>
+                <option value="h5ad">AnnData (h5ad file)</option>
                 <option value="spaceranger">SpaceRanger output</option>
                 <option value="xenium">Xenium output</option>
                 <option value="merscope">MERSCOPE output</option>
@@ -56,14 +72,35 @@
                 <!-- <option value="molecules">Molecules data in csv/tsv file</option> -->
             </param>
             <when value="h5ad">
-                <param name="input_h5ad" type="data" format="h5ad" label="Anndata (h5ad) file"/>
-                <param name="chunk_size" type="integer" label="Output Zarr column chunk size." value="10" optional="true"/>
-                <!-- TODO: Somehow have batch_processing as a condition for batch_size? Might even make sense to not offer either as an option but instead enable by default for efficiency? -->
-                <param name="batch_processing" type="boolean" label="Batch processing" optional="true" checked="false" help="If the expression matrix will be written to Zarr incrementally. Use to avoid loading the whole AnnData into memory."/>
-                <param name="batch_size" type="integer" label="Batch size" optional="true" value="10000" help="The amount of rows (if matrix is in CSR format) or columns (if matrix is dense or in CSC format) of the expression matrix to process at a time when batch processing."/>
+                <param name="input_h5ad" type="data" format="h5ad" label="h5ad file"/>
+                <expand macro="stem"/>
+                <param name="chunk_size" type="integer" label="Output Zarr column chunk size." value="10" min="1"/>
+                <param name="compute_embeddings" type="boolean" label="Compute embeddings" optional="true" checked="false" help="If `X_umap` and `X_pca` embeddings will be computed."/>
+                <param name="var_index" type="text" label="Alternative var index" optional="true" help="Alternative `var` column name with `var` names to be used in the visualization."/>
+                <conditional name="obs_subset_conditional">
+                    <param name="obs_subset" type="boolean" label="Subset obs" checked="false" help="Subset the AnnData object on a specific 'obs' column with one or more values."/>
+                    <when value="true">
+                        <param name="obs_subset_column" type="text" label="obs column name" optional="false" help="obs column to apply the subset on."/>
+                        <param name="obs_subset_values" type="text" label="Allowed values" optional="false" help="Comma-separated list of allowed values."/>
+                    </when>
+                </conditional>
+                <conditional name="var_subset_conditional">
+                    <param name="var_subset" type="boolean" label="Subset var" checked="false" help="Subset the AnnData object on a specific 'var' column with one or more values."/>
+                    <when value="true">
+                        <param name="var_subset_column" type="text" label="var column name" optional="false" help="var column to apply the subset on."/>
+                        <param name="var_subset_values" type="text" label="Allowed values" optional="false" help="Comma-separated list of allowed values."/>
+                    </when>
+                </conditional>
+                <conditional name="batch_processing_conditional">
+                    <param name="batch_processing" type="boolean" label="Enable batch processing" checked="false" help="If the expression matrix will be written to Zarr incrementally. Use to avoid loading the whole AnnData into memory."/>
+                    <when value="true">
+                        <param name="batch_size" type="integer" label="Batch size" value="10000" min="1" help="The amount of rows (if matrix is in CSR format) or columns (if matrix is dense or in CSC format) of the expression matrix to process at a time when batch processing."/>
+                    </when>
+                </conditional>
             </when>
             <when value="spaceranger">
                 <param name="input_spaceranger" type="data" format="zip" label="Compressed SpaceRanger output"/>
+                <expand macro="stem"/>
                 <param name="load_clusters" type="boolean" label="Include cluster files" optional="true" checked="true" help="If cluster files should be included in the AnnData object."/>
                 <param name="load_embeddings" type="boolean" label="Include embeddings" optional="true" checked="true" help="If embedding coordinates files should be included in the AnnData object."/>
                 <param name="load_raw" type="boolean" label="Use raw matrix count file" optional="true" checked="false" help="If the raw matrix count file should be loaded instead of the filtered matrix."/>
@@ -71,6 +108,7 @@
             </when>
             <when value="xenium">
                 <param name="input_xenium" type="data" format="zip" label="Compressed Xenium output"/>
+                <expand macro="stem"/>
                 <param name="spatial_as_pixel" type="boolean" label="Convert spatial coordinates to pixels" optional="true" checked="true" help="Boolean indicating whether spatial coordinates should be converted to pixels."/>
                 <!-- TODO: does resolution only apply when spatial_as_pixel is true? If yes, have spatial_as_pixel as condition? -->
                 <param name="resolution" type="float" label="Pixel resolution" optional="true" value="0.2125" help="Pixel resolution."/>
@@ -78,11 +116,13 @@
             </when>
             <when value="merscope">
                 <param name="input_merscope" type="data" format="zip" label="Compressed MERSCOPE output"/>
+                <expand macro="stem"/>
                 <param name="filter_prefix" type="text" value="Blank-" label="Filter prefix" optional="true" help="Prefix to filter out of the data."/>
                 <param name="save_h5ad" type="boolean" label="Save h5ad file" checked="false" help="If the AnnData object should also be written to an h5ad file."/>
             </when>
             <!-- <when value="molecules">
                 <param name="input_molecules" type="data" format="csv,tsv" label="Molecules file"/>
+                <expand macro="stem"/>
                 <param name="has_header" type="boolean" label="Does the input file contain a header row?" optional="true" checked="true"/>
                 <param name="gene_col_name" type="text" label="Column header name where gene names are stored." optional="true" value="Name"/>
                 <param name="x_col_name" type="text" label="Column header name where 'X' coordinates are stored." optional="true" value="x_int"/>
@@ -100,7 +140,6 @@
                 <param name="filter_col_value" type="text" label="Value expected in filter column. If a row has a different value it will not be written to the output file." optional="true"/>
             </when> -->
         </conditional>
-        <param name="prefix" type="text" label="Enter a prefix for the output file(s)" optional="false" value="prefix"/>
     </inputs>
     <outputs>
         <data name="output_h5ad" format="h5ad" label="${tool.name} on ${on_string}: h5ad output">
@@ -117,7 +156,7 @@
     </outputs>
     <tests>
     <test expect_num_outputs="1">
-        <param name="prefix" value="h5ad"/>
+        <param name="stem" value="h5ad"/>
         <conditional name="input_type">
             <param name="input_type_selector" value="h5ad"/>
             <param name="input_h5ad" value="input.h5ad"/>
@@ -133,7 +172,7 @@
     </test>
     
     <test expect_num_outputs="1">
-        <param name="prefix" value="spaceranger"/>
+        <param name="stem" value="spaceranger"/>
         <conditional name="input_type">
             <param name="input_type_selector" value="spaceranger"/>
             <param name="input_spaceranger" value="spaceranger.zip"/>
@@ -150,7 +189,7 @@
     </test>
 
     <test expect_num_outputs="2">
-        <param name="prefix" value="spaceranger"/>
+        <param name="stem" value="spaceranger"/>
         <conditional name="input_type">
             <param name="input_type_selector" value="spaceranger"/>
             <param name="input_spaceranger" value="spaceranger.zip"/>
@@ -172,7 +211,7 @@
     </test>
     
     <!-- <test expect_num_outputs="1">
-        <param name="prefix" value="xenium"/>
+        <param name="stem" value="xenium"/>
         <conditional name="input_type">
             <param name="input_type_selector" value="xenium"/>
             <param name="input_xenium" value="xenium.zip"/>
@@ -190,7 +229,7 @@
     
     <!-- <test expect_num_outputs="1"> -->
         <!-- missing test file -->
-        <!-- <param name="prefix" value="merscope"/>
+        <!-- <param name="stem" value="merscope"/>
         <conditional name="input_type">
             <param name="input_type_selector" value="merscope"/>
             <param name="input_merscope" value="merscope.zip"/>

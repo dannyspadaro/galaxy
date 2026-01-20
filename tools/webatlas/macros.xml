@@ -22,6 +22,9 @@
             <requirement type="package" version="0.15.0">rioxarray</requirement>
         </requirements>
     </xml>
+    <xml name="stem">
+        <param name="stem" type="text" label="Enter a prefix for the output file(s)" optional="false"/>
+    </xml>
     <xml name="citations">
         <citations>
             <citation type="doi">
