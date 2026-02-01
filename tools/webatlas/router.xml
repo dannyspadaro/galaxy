@@ -97,14 +97,14 @@
                 <expand macro="stem"/>
                 <param name="spatial_as_pixel" type="boolean" label="Convert spatial coordinates to pixels" checked="true"/>
                 <!-- TODO: does resolution only apply when spatial_as_pixel is true? If yes, have spatial_as_pixel as condition? -->
-                <param name="resolution" type="float" label="Pixel resolution" optional="true" value="0.2125" help="Pixel resolution."/>
+                <param name="resolution" type="float" label="Pixel resolution" optional="true" value="0.2125" help="Default value: 0.2125"/>
                 <expand macro="h5ad_to_zarr_parameters"/>
                 <expand macro="save_h5ad"/>
             </when>
             <when value="merscope">
                 <param name="input_merscope" type="data" format="zip" label="Compressed MERSCOPE output"/>
                 <expand macro="stem"/>
-                <param name="filter_prefix" type="text" value="Blank-" label="Filter prefix" optional="true" help="Prefix to filter out of the data."/>
+                <param name="filter_prefix" type="text" value="Blank-" label="Filter prefix" optional="true" help="Prefix to filter out of the data. Default value: Blank-"/>
                 <expand macro="h5ad_to_zarr_parameters"/>
                 <expand macro="save_h5ad"/>
             </when>
@@ -112,14 +112,14 @@
                 <param name="input_molecules" type="data" format="csv,tsv" label="Molecules file"/>
                 <expand macro="stem"/>
                 <param name="has_header" type="boolean" label="Does the input file contain a header row?" optional="true" checked="true"/>
-                <param name="gene_col_name" type="text" label="Column header name where gene names are stored." optional="true" value="Name"/>
-                <param name="x_col_name" type="text" label="Column header name where 'X' coordinates are stored." optional="true" value="x_int"/>
-                <param name="y_col_name" type="text" label="Column header name where 'Y' coordinates are stored." optional="true" value="y_int"/>
-                <param name="delimiter" type="text" label="Input file delimiter." optional="true" value="\t"/>
-                <param name="x_scale" type="float" label="Scale to multiply 'X' coordinates by." optional="true" value="1.0"/>
-                <param name="y_scale" type="float" label="Scale to multiply 'Y' coordinates by." optional="true" value="1.0"/>
-                <param name="x_offset" type="float" label="Offset to add to 'X' coordinates." optional="true" value="0.0"/>
-                <param name="y_offset" type="float" label="Offset to add to 'Y' coordinates." optional="true" value="0.0"/>
+                <param name="gene_col_name" type="text" label="Column header name where gene names are stored." optional="true" value="Name" help="Default value: Name"/>
+                <param name="x_col_name" type="text" label="Column header name where 'X' coordinates are stored." optional="true" value="x_int" help="Default value: x_int"/>
+                <param name="y_col_name" type="text" label="Column header name where 'Y' coordinates are stored." optional="true" value="y_int" help="Default value: y_int"/>
+                <param name="delimiter" type="text" label="Input file delimiter." optional="true" value="\t" help="Default value: \t"/>
+                <param name="x_scale" type="float" label="Scale to multiply 'X' coordinates by." optional="true" value="1.0" help="Default value: 1.0"/>
+                <param name="y_scale" type="float" label="Scale to multiply 'Y' coordinates by." optional="true" value="1.0" help="Default value: 1.0"/>
+                <param name="x_offset" type="float" label="Offset to add to 'X' coordinates." optional="true" value="0.0" help="Default value: 0.0"/>
+                <param name="y_offset" type="float" label="Offset to add to 'Y' coordinates." optional="true" value="0.0" help="Default value: 0.0"/>
                 <param name="gene_col_idx" type="integer" label="Column index where gene names are stored if header is not present." optional="true"/>
                 <param name="x_col_idx" type="integer" label="Column index where 'X' coordinates are stored if header is not present." optional="true"/>
                 <param name="y_col_idx" type="integer" label="Column index where 'Y' coordinates are stored if header is not present." optional="true"/>

@@ -52,7 +52,7 @@
         <param name="save_h5ad" type="boolean" label="Save h5ad file" checked="false" help="If the AnnData object should also be written to an h5ad file."/>
     </xml>
     <xml name="h5ad_to_zarr_parameters">
-        <param name="chunk_size" type="integer" label="Output Zarr column chunk size." value="10" min="1"/>
+        <param name="chunk_size" type="integer" label="Output Zarr column chunk size." value="10" min="1" help="Default value: 10"/>
         <param name="compute_embeddings" type="boolean" label="Compute embeddings" optional="true" checked="false" help="If `X_umap` and `X_pca` embeddings will be computed."/>
         <param name="var_index" type="text" label="Alternative var index" optional="true" help="Alternative `var` column name with `var` names to be used in the visualization."/>
         <conditional name="obs_subset_conditional">
@@ -72,7 +72,7 @@
         <conditional name="batch_processing_conditional">
             <param name="batch_processing" type="boolean" label="Enable batch processing" checked="false" help="If the expression matrix will be written to Zarr incrementally. Use to avoid loading the whole AnnData into memory."/>
             <when value="true">
-                <param name="batch_size" type="integer" label="Batch size" value="10000" min="1" help="The amount of rows (if matrix is in CSR format) or columns (if matrix is dense or in CSC format) of the expression matrix to process at a time when batch processing."/>
+                <param name="batch_size" type="integer" label="Batch size" value="10000" min="1" help="The amount of rows (if matrix is in CSR format) or columns (if matrix is dense or in CSC format) of the expression matrix to process at a time when batch processing. Default value: 10000"/>
             </when>
         </conditional>
     </xml>
