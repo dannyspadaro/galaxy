@@ -6,23 +6,38 @@
     <requirements>
         <requirement type="package" version="0.5.0">fire</requirement>
         <requirement type="package" version="2.16.1">zarr</requirement>
-        <!-- pinning python to version <3.13 is necessary because otherwise fire can not import pipes -->
-        <requirement type="package" version="3.10">python</requirement>
+        <requirement type="package" version="2023.9.26">tifffile</requirement>
+        <requirement type="package" version="0.7.0">bioformats2raw</requirement>
+        <requirement type="package" version="0.7.0">bioformats2raw-libs</requirement>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-        ln -s '$input_zarr.extra_files_path/$input_zarr.metadata.store_root' output.zarr &&
+        if tiffinfo $input_image | grep "Compression Scheme:" | grep -wq "JPEG";
+        then
+            if od -h -j2 -N2 $input_image | head -n1 | sed 's/[0-9]*  *//' | grep -q -E '002b|2b00';
+            then
+                tiffcp -c none -m 0 -8 $input_image uncompressed.tif;
+            else
+                tiffcp -c none -m 0 $input_image uncompressed.tif || tiffcp -c none -m 0 -8 $input_image uncompressed.tif;
+            fi;
+                bioformats2raw --no-hcs uncompressed.tif output.zarr;
+        else
+            bioformats2raw --no-hcs $input_image output.zarr;
+        fi;
         python "${__tool_directory__}/consolidate_md.py" --file_in output.zarr &&
         zip -r output.zarr.zip output.zarr &&
         mv output.zarr.zip $output_zarr
     ]]></command>
     <inputs>
-        <param name="input_zarr" type="data" format="zarr" label="zarr file"/>
+        <param name="input_image" type="data" format="tiff,jpg" label="tif or jpg image"/>
     </inputs>
     <outputs>
         <data name="output_zarr" format="zarr.zip" label="${tool.name} on ${on_string}: zarr output"/>
     </outputs>
     <tests>
-        <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->
+        <test>
+            <param name="input_image" value="input_image.tiff"/>
+            <output name="output_zarr" value="output.zarr.zip"/>
+        </test>
     </tests>
     <help><![CDATA[
 
