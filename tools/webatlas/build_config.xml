@@ -9,10 +9,34 @@
         <requirement type="package" version="2023.10.3">regex</requirement>
         <requirement type="package" version="3.1.0">vitessce-python</requirement>
     </requirements>
-    <command detect_errors="exit_code"><![CDATA[    
-        ## TODO: figure out inputs, implement --options
+    <command detect_errors="exit_code"><![CDATA[
         ln -s "$input_img_metadata_1" input_img_metadata_1.json &&
-        python "${__tool_directory__}/build_config.py" --project $project --dataset $dataset --file_paths $input_zarr.extra_files_path/$input_zarr.metadata.store_root/ --images '{"label": [{"path": "$input_img_1.extra_files_path/$input_img_1.metadata.store_root/", "md": "input_img_metadata_1.json"}]}' --url $url --layout $layout --title $title --config_filename_suffix $config_filename_suffix &&
+        python "${__tool_directory__}/build_config.py" --file_paths $input_zarr.extra_files_path/$input_zarr.metadata.store_root/ --images '{"label": [{"path": "$input_img_1.extra_files_path/$input_img_1.metadata.store_root/", "md": "input_img_metadata_1.json"}]}'
+        #if $project:
+            --project '$project'
+        #end if
+        #if $dataset:
+            --dataset '$dataset'
+        #end if
+        ## TODO: implement --file_paths : list[str]
+        ## TODO: implement --images : dict[str, list[dict[str, T.Any]]]
+        #if $url:
+            --url '$url'
+        #end if
+        ## TODO: implement options : dict[str, T.Any]
+        #if $layout:
+            --layout '$layout'
+        #end if
+        #if $custom_layout:
+            --custom_layout '$custom_layout'
+        #end if
+        #if $title:
+            --title '$title'
+        #end if
+        #if $config_filename_suffix:
+            --config_filename_suffix '$config_filename_suffix'
+        #end if
+        &&
         mv $project-$dataset-'$config_filename_suffix'* $output_json
     ]]></command>
     <inputs>
@@ -24,6 +48,7 @@
         <param name="project" type="text" label="Project name" optional="true" value=""/>
         <param name="dataset" type="text" label="Dataset name" optional="true" value=""/>
         <param name="url" type="text" label="url" optional="true" value="" help="URL to prepend to each file in the config file. The URL to the local or remote server that will serve the files."/>
+        <!-- TODO: options should pass a dict. How to implement? -->
         <param name="options" type="text" label="Vitessce config file options" optional="true" value=""/>
         <param name="layout" type="text" label="Layout" optional="true" value="minimal" help="Type of predefined layout to use. Default value: minimal"/>
         <param name="custom_layout" type="text" label="Custom layout" optional="true" value="" help="String defining a Vitessce layout following its alternative syntax. https://vitessce.github.io/vitessce-python/api_config.html#vitessce.config.VitessceConfig.layout https://github.com/vitessce/vitessce-python/blob/1e100e4f3f6b2389a899552dffe90716ffafc6d5/vitessce/config.py#L855"/>

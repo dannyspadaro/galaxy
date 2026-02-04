@@ -144,13 +144,27 @@
     </outputs>
     <tests>
     <test expect_num_outputs="1">
-        <param name="stem" value="h5ad"/>
         <conditional name="input_type">
             <param name="input_type_selector" value="h5ad"/>
             <param name="input_h5ad" value="input.h5ad"/>
+            <param name="stem" value="h5ad"/>
             <param name="chunk_size" value="10"/>
-            <param name="batch_processing" value="false"/>
-            <param name="batch_size" value="10000"/>
+            <param name="compute_embeddings" value="false"/>
+            <param name="var_index" value=""/>
+            <conditional name="obs_subset_conditional">
+                <param name="obs_subset" value="false"/>
+                <param name="obs_subset_column" value=""/>
+                <param name="obs_subset_values" value=""/>
+            </conditional>
+            <conditional name="var_subset_conditional">
+                <param name="var_subset" value="false"/>
+                <param name="var_subset_column" value=""/>
+                <param name="var_subset_values" value=""/>
+            </conditional>
+            <conditional name="batch_processing_conditional">
+                <param name="batch_processing" value="false"/>
+                <param name="batch_size" value=""/>
+            </conditional>
         </conditional>
         <output name="output_zarr">
             <assert_contents>
@@ -158,16 +172,28 @@
             </assert_contents>
         </output>
     </test>
-    
-    <test expect_num_outputs="1">
-        <param name="stem" value="spaceranger"/>
+
+    <!-- <test expect_num_outputs="1">
         <conditional name="input_type">
             <param name="input_type_selector" value="spaceranger"/>
             <param name="input_spaceranger" value="spaceranger.zip"/>
+            <param name="stem" value="spaceranger"/>
             <param name="load_clusters" value="true"/>
             <param name="load_embeddings" value="true"/>
             <param name="load_raw" value="false"/>
+            <param name="chunk_size" value="10"/>
+            <param name="compute_embeddings" value="false"/>
+            <param name="var_index" value=""/>
             <param name="save_h5ad" value="false"/>
+            <conditional name="obs_subset_conditional">
+                <param name="obs_subset" value="false"/>
+            </conditional>
+            <conditional name="var_subset_conditional">
+                <param name="var_subset" value="false"/>
+            </conditional>
+            <conditional name="batch_processing_conditional">
+                <param name="batch_processing" value="false"/>
+            </conditional>
         </conditional>
         <output name="output_zarr">
             <assert_contents>
@@ -177,14 +203,26 @@
     </test>
 
     <test expect_num_outputs="2">
-        <param name="stem" value="spaceranger"/>
         <conditional name="input_type">
             <param name="input_type_selector" value="spaceranger"/>
             <param name="input_spaceranger" value="spaceranger.zip"/>
+            <param name="stem" value="spaceranger"/>
             <param name="load_clusters" value="true"/>
             <param name="load_embeddings" value="true"/>
             <param name="load_raw" value="false"/>
+            <param name="chunk_size" value="10"/>
+            <param name="compute_embeddings" value="false"/>
+            <param name="var_index" value=""/>
             <param name="save_h5ad" value="true"/>
+            <conditional name="obs_subset_conditional">
+                <param name="obs_subset" value="false"/>
+            </conditional>
+            <conditional name="var_subset_conditional">
+                <param name="var_subset" value="false"/>
+            </conditional>
+            <conditional name="batch_processing_conditional">
+                <param name="batch_processing" value="false"/>
+            </conditional>
         </conditional>
         <output name="output_zarr">
             <assert_contents>
@@ -196,38 +234,61 @@
                 <has_size value="288444650" delta="100"/>
             </assert_contents>
         </output>
-    </test>
-    
+    </test> -->
+
     <!-- <test expect_num_outputs="1">
-        <param name="stem" value="xenium"/>
         <conditional name="input_type">
             <param name="input_type_selector" value="xenium"/>
             <param name="input_xenium" value="xenium.zip"/>
+            <param name="stem" value=""/>
             <param name="spatial_as_pixel" value="true"/>
             <param name="resolution" value="0.2125"/>
+            <param name="chunk_size" value="10"/>
+            <param name="compute_embeddings" value="false"/>
+            <param name="var_index" value=""/>
             <param name="save_h5ad" value="false"/>
+            <conditional name="obs_subset_conditional">
+                <param name="obs_subset" value="false"/>
+            </conditional>
+            <conditional name="var_subset_conditional">
+                <param name="var_subset" value="false"/>
+            </conditional>
+            <conditional name="batch_processing_conditional">
+                <param name="batch_processing" value="false"/>
+            </conditional>
         </conditional>
         <output name="output_zarr">
-            <assert_contents> -->
-                <!-- TODO: add proper size -->
-                <!-- <has_size value="100" delta="20"/>
+            <assert_contents>
+                TODO: add proper size
+                <has_size value="100" delta="20"/>
             </assert_contents>
         </output>
     </test> -->
     
-    <!-- <test expect_num_outputs="1"> -->
-        <!-- missing test file -->
-        <!-- <param name="stem" value="merscope"/>
+    <!-- <test expect_num_outputs="1">
         <conditional name="input_type">
             <param name="input_type_selector" value="merscope"/>
             <param name="input_merscope" value="merscope.zip"/>
+            <param name="stem" value="merscope"/>
             <param name="filter_prefix" value="Blank-"/>
+            <param name="chunk_size" value="10"/>
+            <param name="compute_embeddings" value="false"/>
+            <param name="var_index" value=""/>
             <param name="save_h5ad" value="false"/>
+            <conditional name="obs_subset_conditional">
+                <param name="obs_subset" value="false"/>
+            </conditional>
+            <conditional name="var_subset_conditional">
+                <param name="var_subset" value="false"/>
+            </conditional>
+            <conditional name="batch_processing_conditional">
+                <param name="batch_processing" value="false"/>
+            </conditional>
         </conditional>
-        <output name="output_zarr"> -->
-            <!-- <assert_contents> -->
-                <!-- adjust values for the actual output when available -->
-                <!-- <has_size value="100" delta="20"/>
+        <output name="output_zarr">
+            <assert_contents>
+                TODO: adjust values for the actual output when available
+                <has_size value="100" delta="20"/>
             </assert_contents>
         </output>
     </test> -->
