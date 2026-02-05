@@ -40,7 +40,9 @@
             #if not $spatial_as_pixel:
                 --spatial_as_pixel=False
             #end if
-            --resolution $resolution
+            #if $resolution:
+                --resolution $resolution
+            #end if
             #if $save_h5ad:
                 --save_h5ad
             #end if
@@ -96,7 +98,6 @@
                 <param name="input_xenium" type="data" format="zip" label="Compressed Xenium output"/>
                 <expand macro="stem"/>
                 <param name="spatial_as_pixel" type="boolean" label="Convert spatial coordinates to pixels" checked="true"/>
-                <!-- TODO: does resolution only apply when spatial_as_pixel is true? If yes, have spatial_as_pixel as condition? -->
                 <param name="resolution" type="float" label="Pixel resolution" optional="true" value="0.2125" help="Default value: 0.2125"/>
                 <expand macro="h5ad_to_zarr_parameters"/>
                 <expand macro="save_h5ad"/>

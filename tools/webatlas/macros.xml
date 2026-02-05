@@ -111,6 +111,12 @@
         &&
         ]]>
     </token>
+    <token name="@REF_IMG_COMMAND@"><![CDATA[
+        #if $ref_img:
+            --ref_img $ref_img
+        #end if
+        ]]>
+    </token>
     <token name="@Z_INDEX_COMMAND@"><![CDATA[
         --args "{
         #if $z_index:
