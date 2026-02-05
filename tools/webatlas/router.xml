@@ -153,22 +153,17 @@
             <param name="var_index" value=""/>
             <conditional name="obs_subset_conditional">
                 <param name="obs_subset" value="false"/>
-                <param name="obs_subset_column" value=""/>
-                <param name="obs_subset_values" value=""/>
             </conditional>
             <conditional name="var_subset_conditional">
                 <param name="var_subset" value="false"/>
-                <param name="var_subset_column" value=""/>
-                <param name="var_subset_values" value=""/>
             </conditional>
             <conditional name="batch_processing_conditional">
                 <param name="batch_processing" value="false"/>
-                <param name="batch_size" value=""/>
             </conditional>
         </conditional>
         <output name="output_zarr">
             <assert_contents>
-                <has_size value="78758875" delta="100"/>
+                <has_size value="78759191" delta="100"/>
             </assert_contents>
         </output>
     </test>

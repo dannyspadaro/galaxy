@@ -21,17 +21,31 @@
     #elif $input_type_selector == "label_xenium":
         mkdir unpacked_xenium &&
         unzip $input_xenium -d unpacked_xenium &&
-        python "${__tool_directory__}/generate_image.py" --stem $stem --img_type label --file_type xenium --file_path unpacked_xenium &&
+        python "${__tool_directory__}/generate_image.py" --stem $stem --img_type label --file_type xenium --file_path unpacked_xenium
+        #if $ref_img:
+            --ref_img $ref_img
+        #end if
+        --args "{
+        #if $resolution:
+            'resolution': '$resolution'
+        #end if
+        }"
+        &&
         mv $stem-label.tif $output_label
     #elif $input_type_selector == "label_merscope":
         mkdir unpacked_merscope &&
         unzip $input_merscope_label -d unpacked_merscope &&
-        python "${__tool_directory__}/generate_image.py" --stem $stem --img_type label --file_type merscope --file_path unpacked_merscope &&
+        python "${__tool_directory__}/generate_image.py" --stem $stem --img_type label --file_type merscope --file_path unpacked_merscope
+        #if $ref_img:
+            --ref_img $ref_img
+        #end if
+        @Z_INDEX_COMMAND@
         mv $stem-label.tif $output_label
     #elif $input_type_selector == "raw_merscope":
         mkdir unpacked_merscope &&
-        unzip $input_merscope_label -d unpacked_merscope &&
-        python "${__tool_directory__}/generate_image.py" --stem $stem --img_type raw --file_type merscope --file_path unpacked_merscope &&
+        unzip $input_merscope_raw -d unpacked_merscope &&
+        python "${__tool_directory__}/generate_image.py" --stem $stem --img_type raw --file_type merscope --file_path unpacked_merscope
+        @Z_INDEX_COMMAND@
         mv $stem-raw.tif $output_raw
     #end if
     ]]></command>
@@ -66,15 +80,18 @@
                 <param name="input_xenium" type="data" format="zip" label="zip compressed Xenium output or cells.zarr.zip file"/>
                 <expand macro="ref_img"/>
                 <expand macro="stem"/>
+                <param name="resolution" type="float" label="Pixel resolution" optional="true" value="0.2125" help="Default value: 0.2125"/>
             </when>
             <when value="label_merscope">
                 <param name="input_merscope_label" type="data" format="zip" label="zip compressed MERSCOPE output"/>
                 <expand macro="ref_img"/>
                 <expand macro="stem"/>
+                <expand macro="z_index"/>
             </when>
             <when value="raw_merscope">
                 <param name="input_merscope_raw" type="data" format="zip" label="zip compressed MERSCOPE output"/>
                 <expand macro="stem"/>
+                <expand macro="z_index"/>
             </when>
         </conditional>
     </inputs>
