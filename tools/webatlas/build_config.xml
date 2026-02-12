@@ -4,14 +4,11 @@
         <import>macros.xml</import>
     </macros>
     <requirements>
-        <requirement type="package" version="0.5.0">fire</requirement>
-        <requirement type="package" version="3.10">python</requirement>
-        <requirement type="package" version="2023.10.3">regex</requirement>
-        <requirement type="package" version="3.1.0">vitessce-python</requirement>
+        <container type="docker">haniffalab/webatlas-pipeline-build-config:0.5.3</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
         ln -s "$input_img_metadata_1" input_img_metadata_1.json &&
-        python "${__tool_directory__}/build_config.py"
+        /usr/local/bin/build_config.py
         #if $project:
             --project '$project'
         #end if
@@ -68,7 +65,7 @@
         <param name="config_filename_suffix" type="text" label="Config filename suffix" optional="true" value="config.json" help="Default value: config.json"/>
     </inputs>
     <outputs>
-        <data name="output_json" format="json" label="${tool.name} on ${on_string}: $project-$dataset-$config_filename_suffix"/>
+        <data name="output_json" format="vitessce.json" label="${tool.name} on ${on_string}: $project-$dataset-$config_filename_suffix"/>
     </outputs>
     <tests>
         <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->

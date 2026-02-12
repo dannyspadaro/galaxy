@@ -8,20 +8,20 @@
     #if $input_type_selector == "label_visium":
         #if $file_type_selector_visium == "h5ad":
             ln -s '$input_visium_h5ad' input.h5ad &&
-            python "${__tool_directory__}/generate_image.py" --stem $stem --img_type label --file_type visium --file_path input.h5ad
+            /usr/local/bin/generate_image.py --stem $stem --img_type label --file_type visium --file_path input.h5ad
             @VISIUM_LABEL_COMMAND@
             mv $stem-label.tif $output_label
         #elif $file_type_selector_visium == "zip":
             mkdir unpacked_spaceranger &&
             unzip $input_visium_zip -d unpacked_spaceranger &&
-            python "${__tool_directory__}/generate_image.py" --stem $stem --img_type label --file_type visium --file_path unpacked_spaceranger
+            /usr/local/bin/generate_image.py --stem $stem --img_type label --file_type visium --file_path unpacked_spaceranger
             @VISIUM_LABEL_COMMAND@
             mv $stem-label.tif $output_label
         #end if
     #elif $input_type_selector == "label_xenium":
         mkdir unpacked_xenium &&
         unzip $input_xenium -d unpacked_xenium &&
-        python "${__tool_directory__}/generate_image.py" --stem $stem --img_type label --file_type xenium --file_path unpacked_xenium
+        /usr/local/bin/generate_image.py --stem $stem --img_type label --file_type xenium --file_path unpacked_xenium
         @REF_IMG_COMMAND@
         --args "{
         #if $resolution:
@@ -33,14 +33,14 @@
     #elif $input_type_selector == "label_merscope":
         mkdir unpacked_merscope &&
         unzip $input_merscope_label -d unpacked_merscope &&
-        python "${__tool_directory__}/generate_image.py" --stem $stem --img_type label --file_type merscope --file_path unpacked_merscope
+        /usr/local/bin/generate_image.py --stem $stem --img_type label --file_type merscope --file_path unpacked_merscope
         @REF_IMG_COMMAND@
         @Z_INDEX_COMMAND@
         mv $stem-label.tif $output_label
     #elif $input_type_selector == "raw_merscope":
         mkdir unpacked_merscope &&
         unzip $input_merscope_raw -d unpacked_merscope &&
-        python "${__tool_directory__}/generate_image.py" --stem $stem --img_type raw --file_type merscope --file_path unpacked_merscope
+        /usr/local/bin/generate_image.py --stem $stem --img_type raw --file_type merscope --file_path unpacked_merscope
         @Z_INDEX_COMMAND@
         mv $stem-raw.tif $output_raw
     #end if

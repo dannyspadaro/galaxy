@@ -3,26 +3,20 @@
     <macros>
         <import>macros.xml</import>
     </macros>
-    <requirements>
-        <requirement type="package" version="0.5.0">fire</requirement>
-        <requirement type="package" version="2023.9.26">tifffile</requirement>
-        <requirement type="package" version="0.9.1">anndata</requirement>
-        <requirement type="package" version="0.15.0">rioxarray</requirement>
-        <requirement type="package" version="0.0.15">spatialdata</requirement>
-    </requirements>
+    <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
         #if $input_type_selector == "h5ad":
             ln -s '$input_h5ad' input.h5ad &&
             ## skip following 1/2 lines with if-statement when respective input is None?
             ln -s '$input_raw_img' input_raw.tif &&
             ln -s '$input_label_img' input_label.tif &&
-            python "${__tool_directory__}/write_spatialdata.py" --anndata_path input.h5ad --stem $stem --raw_img_path input_raw.tif --label_img_path input_label.tif
+            /usr/local/bin/write_spatialdata.py --anndata_path input.h5ad --stem $stem --raw_img_path input_raw.tif --label_img_path input_label.tif
         #elif $input_type_selector == "zarr":
             ln -s '$input_zarr' input.zarr &&
             ## skip following 1/2 lines with if-statement when respective input is None?
             ln -s '$input_raw_img' input_raw.tif &&
             ln -s '$input_label_img' input_label.tif &&
-            python "${__tool_directory__}/write_spatialdata.py" --anndata_path input.zarr --stem $stem --raw_img_path input_raw.tif --label_img_path input_label.tif
+            /usr/local/bin/write_spatialdata.py --anndata_path input.zarr --stem $stem --raw_img_path input_raw.tif --label_img_path input_label.tif
         #end if
     ]]></command>
     <inputs>
