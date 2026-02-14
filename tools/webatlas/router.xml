@@ -169,7 +169,91 @@
         </output>
     </test>
 
-    <!-- <test expect_num_outputs="1">
+    <test expect_num_outputs="1">
+        <conditional name="input_type">
+            <param name="input_type_selector" value="h5ad"/>
+            <param name="input_h5ad" value="input.h5ad"/>
+            <param name="stem" value="h5ad"/>
+            <param name="chunk_size" value="10"/>
+            <param name="compute_embeddings" value="false"/>
+            <param name="var_index" value=""/>
+            <conditional name="obs_subset_conditional">
+                <param name="obs_subset" value="true"/>
+                <param name="obs_subset_column" value="in_tissue"/>
+                <param name="obs_subset_values" value="1"/>
+            </conditional>
+            <conditional name="var_subset_conditional">
+                <param name="var_subset" value="false"/>
+            </conditional>
+            <conditional name="batch_processing_conditional">
+                <param name="batch_processing" value="false"/>
+            </conditional>
+        </conditional>
+        <output name="output_zarr">
+            <assert_contents>
+                <has_size value="78759191" delta="100"/>
+            </assert_contents>
+        </output>
+    </test>
+
+    <test expect_num_outputs="1">
+        <conditional name="input_type">
+            <param name="input_type_selector" value="h5ad"/>
+            <param name="input_h5ad" value="input.h5ad"/>
+            <param name="stem" value="h5ad"/>
+            <param name="chunk_size" value="10"/>
+            <param name="compute_embeddings" value="false"/>
+            <param name="var_index" value=""/>
+            <conditional name="obs_subset_conditional">
+                <param name="obs_subset" value="false"/>
+            </conditional>
+            <conditional name="var_subset_conditional">
+                <param name="var_subset" value="true"/>
+                <param name="var_subset_column" value="gene_ids"/>
+                <param name="var_subset_values" value="A1CF,MSN"/>
+            </conditional>
+            <conditional name="batch_processing_conditional">
+                <param name="batch_processing" value="false"/>
+            </conditional>
+        </conditional>
+        <output name="output_zarr">
+            <assert_contents>
+                <has_size value="78759191" delta="100"/>
+            </assert_contents>
+        </output>
+    </test>
+
+    <test expect_num_outputs="1">
+        <conditional name="input_type">
+            <param name="input_type_selector" value="h5ad"/>
+            <param name="input_h5ad" value="input.h5ad"/>
+            <param name="stem" value="h5ad"/>
+            <param name="chunk_size" value="10"/>
+            <param name="compute_embeddings" value="false"/>
+            <param name="var_index" value=""/>
+            <conditional name="obs_subset_conditional">
+                <param name="obs_subset" value="true"/>
+                <param name="obs_subset_column" value="in_tissue"/>
+                <param name="obs_subset_values" value="1"/>
+            </conditional>
+            <conditional name="var_subset_conditional">
+                <param name="var_subset" value="true"/>
+                <param name="var_subset_column" value="gene_ids"/>
+                <param name="var_subset_values" value="A1CF,MSN"/>
+            </conditional>
+            <conditional name="batch_processing_conditional">
+                <param name="batch_processing" value="true"/>
+                <param name="batch_size" value="11000"/>
+            </conditional>
+        </conditional>
+        <output name="output_zarr">
+            <assert_contents>
+                <has_size value="78759191" delta="100"/>
+            </assert_contents>
+        </output>
+    </test>
+
+    <test expect_num_outputs="1">
         <conditional name="input_type">
             <param name="input_type_selector" value="spaceranger"/>
             <param name="input_spaceranger" value="spaceranger.zip"/>
@@ -230,7 +314,7 @@
                 <has_size value="288444650" delta="100"/>
             </assert_contents>
         </output>
-    </test> -->
+    </test>
 
     <!-- <test expect_num_outputs="1">
         <conditional name="input_type">
