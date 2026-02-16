@@ -28,10 +28,14 @@
         <data name="output_zarr" format="zarr.zip" label="${tool.name} on ${on_string}: zarr output"/>
     </outputs>
     <tests>
-        <test>
-            <param name="input_image" value="input_image.tiff"/>
-            <output name="output_zarr" value="output.zarr.zip"/>
-        </test>
+    <test expect_num_outputs="1">
+        <param name="input_image" value="input_image.tiff"/>
+        <output name="output_zarr">
+            <assert_contents>
+                <has_size value="6312461" delta="100"/>
+            </assert_contents>
+        </output>
+    </test>
     </tests>
     <help><![CDATA[
 

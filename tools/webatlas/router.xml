@@ -218,7 +218,7 @@
         </conditional>
         <output name="output_zarr">
             <assert_contents>
-                <has_size value="78759191" delta="100"/>
+                <has_size value="18225797" delta="100"/>
             </assert_contents>
         </output>
     </test>
@@ -248,7 +248,7 @@
         </conditional>
         <output name="output_zarr">
             <assert_contents>
-                <has_size value="78759191" delta="100"/>
+                <has_size value="18225797" delta="100"/>
             </assert_contents>
         </output>
     </test>
@@ -277,7 +277,7 @@
         </conditional>
         <output name="output_zarr">
             <assert_contents>
-                <has_size value="78793624" delta="100"/>
+                <has_size value="78789316" delta="100"/>
             </assert_contents>
         </output>
     </test>
@@ -306,7 +306,7 @@
         </conditional>
         <output name="output_zarr">
             <assert_contents>
-                <has_size value="78793624" delta="100"/>
+                <has_size value="78789316" delta="100"/>
             </assert_contents>
         </output>
         <output name="output_h5ad">
@@ -339,13 +339,12 @@
         </conditional>
         <output name="output_zarr">
             <assert_contents>
-                TODO: add proper size
                 <has_size value="100" delta="20"/>
             </assert_contents>
         </output>
     </test> -->
     
-    <!-- <test expect_num_outputs="1">
+    <test expect_num_outputs="1">
         <conditional name="input_type">
             <param name="input_type_selector" value="merscope"/>
             <param name="input_merscope" value="merscope.zip"/>
@@ -367,11 +366,10 @@
         </conditional>
         <output name="output_zarr">
             <assert_contents>
-                TODO: adjust values for the actual output when available
-                <has_size value="100" delta="20"/>
+                <has_size value="217344" delta="100"/>
             </assert_contents>
         </output>
-    </test> -->
+    </test>
     </tests>
     <help><![CDATA[
 

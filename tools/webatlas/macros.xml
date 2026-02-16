@@ -83,7 +83,7 @@
             --ref_img $ref_img
         #end if
         --args "{
-        #if $obs_subset_conditional.obs_subset:
+        #if $obs_subset_conditional.obs_subset == 'true':
             'obs_subset': ['$obs_subset_column', ${obs_subset_values.replace(' ', '').split(',')}],
         #end if
         #if $sample_id:
