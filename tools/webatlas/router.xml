@@ -77,7 +77,7 @@
                 <option value="spaceranger">SpaceRanger output</option>
                 <option value="xenium">Xenium output</option>
                 <option value="merscope">MERSCOPE output</option>
-                <!-- currently there is no usecase for this option. It can be implemented on request -->
+                <!-- Currently there is no usecase for this option. It can be implemented on request -->
                 <!-- <option value="molecules">Molecules data in csv/tsv file</option> -->
             </param>
             <when value="h5ad">
@@ -257,7 +257,7 @@
         <conditional name="input_type">
             <param name="input_type_selector" value="spaceranger"/>
             <param name="input_spaceranger" value="spaceranger.zip"/>
-            <param name="stem" value="spaceranger"/>
+            <param name="stem" value="visium-breast-cancer"/>
             <param name="load_clusters" value="true"/>
             <param name="load_embeddings" value="true"/>
             <param name="load_raw" value="false"/>
@@ -277,7 +277,7 @@
         </conditional>
         <output name="output_zarr">
             <assert_contents>
-                <has_size value="78789316" delta="100"/>
+                <has_size value="78828151" delta="100"/>
             </assert_contents>
         </output>
     </test>
@@ -286,7 +286,7 @@
         <conditional name="input_type">
             <param name="input_type_selector" value="spaceranger"/>
             <param name="input_spaceranger" value="spaceranger.zip"/>
-            <param name="stem" value="spaceranger"/>
+            <param name="stem" value="visium-breast-cancer"/>
             <param name="load_clusters" value="true"/>
             <param name="load_embeddings" value="true"/>
             <param name="load_raw" value="false"/>
@@ -306,7 +306,7 @@
         </conditional>
         <output name="output_zarr">
             <assert_contents>
-                <has_size value="78789316" delta="100"/>
+                <has_size value="78828151" delta="100"/>
             </assert_contents>
         </output>
         <output name="output_h5ad">
@@ -320,7 +320,7 @@
         <conditional name="input_type">
             <param name="input_type_selector" value="xenium"/>
             <param name="input_xenium" value="xenium.zip"/>
-            <param name="stem" value=""/>
+            <param name="stem" value="xenium-breast-cancer"/>
             <param name="spatial_as_pixel" value="true"/>
             <param name="resolution" value="0.2125"/>
             <param name="chunk_size" value="10"/>

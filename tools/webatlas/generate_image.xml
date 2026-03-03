@@ -164,7 +164,7 @@
         </conditional>
         <output name="output_label">
             <assert_contents>
-                <has_size value="0" delta="100"/>
+                <has_size value="841661672" delta="100"/>
             </assert_contents>
         </output>
     </test>
@@ -172,7 +172,7 @@
     <test expect_num_outputs="1">
         <conditional name="input_type">
             <param name="input_type_selector" value="label_visium"/>
-            <param name="stem" value="visium_spaceranger"/>
+            <param name="stem" value="visium-breast-cancer"/>
             <param name="sample_id" value=""/>
             <param name="relative_size" value=""/>
             <conditional name="file_type_visium">
@@ -195,7 +195,7 @@
         <conditional name="input_type">
             <param name="input_type_selector" value="label_xenium"/>
             <param name="input_xenium" value="xenium.zip"/>
-            <param name="stem" value="xenium"/>
+            <param name="stem" value="xenium-breast-cancer"/>
             <param name="resolution" value="0.2125"/>
         </conditional>
         <output name="output_label">
@@ -209,13 +209,13 @@
         <conditional name="input_type">
             <param name="input_type_selector" value="label_merscope"/>
             <param name="input_merscope_label" value="merscope.zip"/>
-            <param name="ref_img" value="input_image.tiff"/>
+            <param name="ref_img" value="shape.tiff"/>
             <param name="stem" value="label_merscope"/>
             <param name="z_index" value=""/>
         </conditional>
         <output name="output_label">
             <assert_contents>
-                <has_size value="1683323056" delta="100"/>
+                <has_size value="14838160" delta="100"/>
             </assert_contents>
         </output>
     </test>
