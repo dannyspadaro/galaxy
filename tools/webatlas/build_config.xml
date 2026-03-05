@@ -16,14 +16,15 @@
         #if $dataset:
             --dataset '$dataset'
         #end if
+        ##add comma for list
         --file_paths "[
         #for $file in $input_file_paths:
-            '$file.metadata.store_root',
+            /api/datasets/${__app__.security.encode_id($file.id)}/display
         #end for
         ]"
         --images "\$(cat images.json)"
         ##TODO: add galaxy url
-        ## --url '$url'
+        --url ${__app__.config.galaxy_infrastructure_url}
         --options "\$(cat options.json)"
         #if $layout:
             --layout '$layout'
@@ -48,7 +49,8 @@ images = {"raw": [], "label": []}
 
 #for $img in $rep_images
 image_type = "${img.input_image_type}"
-zarr_name = "${img.input_image.metadata.store_root}"
+##zarr_name = "${img.input_image.metadata.store_root}"
+zarr_name = "/api/datasets/${__app__.security.encode_id($img.input_image.id)}/display"
 metadata_path = "${img.input_metadata}"
 
 with open(metadata_path) as md_file:
@@ -76,7 +78,7 @@ import json
 options = {}
 
 if "${spatial}":
-    options["spatial:"] = "${spatial}"
+    options["spatial:"] = "xy: obsm/'$spatial'"
 if "${matrix}":
     options["matrix:"] = "${matrix}"
 
@@ -98,9 +100,10 @@ with open("options.json", "w") as file:
         <param name="project" type="text" label="Project name" optional="true" value=""/>
         <param name="dataset" type="text" label="Dataset name" optional="true" value=""/>
         <section name="sec_vitessce_options" title="Vitessce config file options">
-            <param name="spatial" type="text" label="Where the Anndata object holds the spatial coordinates" optional="true" value="" help='Example: xy: "obsm/spatial"'/>
-            <param name="x_umap" type="text" label="Comma seperated list of embeddings to use in a scatter plot" optional="true" value="" help="It always plots the first 2 dimensions of the data. E.g. in case of PCA, it plots PC1 vs PC2."/>
-            <param name="x_pca" type="text" label="Comma seperated list of embeddings" optional="true" value="" help=""/>
+            <param name="spatial" type="text" label="Where the Anndata object holds the spatial coordinates" value="spatial" help='Example: spatial'/>
+            <param name="umap" type="text" label="Where the Anndata object holds the UMAP embeddings" optional="true" value="" help='Example: X_umap'/>
+            <param name="pca" type="text" label="Where the Anndata object holds the PCA embeddings" optional="true" value="" help='Example: X_pca'/>
+            <param name="embeddings_to_plot" type="text" label="Comma seperated list of embeddings plot" optional="true" value="" help="It always plots the first 2 dimensions of the data. E.g. in case of PCA, it plots PC1 vs PC2."/>
             <param name="sets" type="text" label="" optional="true" value=""/>
             <param name="matrix" type="text" label="" optional="true" value=""/>
             <param name="factors" type="text" label="" optional="true" value=""/>
@@ -132,8 +135,6 @@ with open("options.json", "w") as file:
         </repeat>
         <section name="sec_vitessce_options">
             <param name="spatial" value='xy: "obsm/spatial"'/>
-            <param name="x_umap" value=""/>
-            <param name="x_pca" value=""/>
             <param name="sets" value=""/>
             <param name="matrix" value='"X"'/>
             <param name="factors" value=""/>
