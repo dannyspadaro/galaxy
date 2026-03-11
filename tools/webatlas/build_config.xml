@@ -75,13 +75,72 @@ with open("images.json", "w") as file:
 import json
 
 options = {}
+
 spatial = "${sec_vitessce_options.spatial}"
+
+spatial_mapping = "${sec_vitessce_options.mappings_spatial_conditional.mappings_spatial}"
+
+pca_mapping = "${sec_vitessce_options.mappings_pca_conditional.mappings_pca}"
+pca_value = "${sec_vitessce_options.mappings_pca_conditional.pca_value}"
+
+umap_mapping = "${sec_vitessce_options.mappings_umap_conditional.mappings_umap}"
+umap_value = "${sec_vitessce_options.mappings_umap_conditional.umap_value}"
+
+factors= "${sec_vitessce_options.factors}"
+
+sets = "${sec_vitessce_options.sets}"
+
 matrix = "${sec_vitessce_options.matrix}"
 
+## spatial
 if spatial:
     options["spatial"] = {
         "xy": f"obsm/{spatial}"
     }
+
+## mappings
+mappings = {}
+
+if spatial_mapping == "true" and spatial:
+    spatial_dim1 = int("${sec_vitessce_options.mappings_spatial_conditional.spatial_dim1}")
+    spatial_dim2 = int("${sec_vitessce_options.mappings_spatial_conditional.spatial_dim2}")
+    mappings[f"obsm/{spatial}"] = [spatial_dim1, spatial_dim2]
+
+if pca_mapping == "true":
+    pca_dim1 = int("${sec_vitessce_options.mappings_pca_conditional.pca_dim1}")
+    pca_dim2 = int("${sec_vitessce_options.mappings_pca_conditional.pca_dim2}")
+    mappings[f"obsm/{pca_value}"] = [pca_dim1, pca_dim2]
+
+if umap_mapping == "true":
+    umap_dim1 = int("${sec_vitessce_options.mappings_umap_conditional.umap_dim1}")
+    umap_dim2 = int("${sec_vitessce_options.mappings_umap_conditional.umap_dim2}")
+    mappings[f"obsm/{umap_value}"] = [umap_dim1, umap_dim2]
+
+if mappings:
+    options["mappings"] = mappings
+
+## factors
+if factors:
+    options["factors"] = [f"obs/{f.strip()}" for f in factors.split(",") if f.strip()]
+
+## sets
+if sets:
+    parsed_sets = []
+
+    for s in sets.split(","):
+        s = s.strip()
+        if not s:
+            continue
+
+        if ":" in s:
+            name, score = [x.strip() for x in s.split(":", 1)]
+            parsed_sets.append({"name": f"obs/{name}","score": f"obs/{score}"})
+        else:
+            parsed_sets.append(f"obs/{s}")
+
+options["sets"] = parsed_sets
+
+## matrix
 if matrix:
     options["matrix"] = matrix
 
@@ -103,14 +162,15 @@ with open("options.json", "w") as file:
         <param name="project" type="text" label="Project name" optional="false" value=""/>
         <param name="dataset" type="text" label="Dataset name" optional="false" value=""/>
         <section name="sec_vitessce_options" title="Vitessce config file options">
-            <param name="spatial" type="text" value="spatial" label="Where the Anndata object holds the spatial coordinates" help="Examples: spatial, X_spatial. 'xy:' gets prepended automatically"/>
+            <param name="spatial" type="text" value="spatial" label="Where the Anndata object holds the spatial coordinates" help="Examples: 'spatial', 'X_spatial'. 'xy:' gets prepended automatically."/>
             <conditional name="mappings_spatial_conditional">
                 <param name="mappings_spatial" type="select" label="Include spatial in scatterplot (mappings option)">
                     <option value="false">No</option>
                     <option value="true">Yes</option>
                 </param>
                 <when value="true">
-                    <param name="spatial_range" type="text" value="[0,1]" optional="false" label="The range that should be plotted (comma-separated list)"/>
+                    <param name="spatial_dim1" type="integer" value="0" optional="false" label="Dimension 1"/>
+                    <param name="spatial_dim2" type="integer" value="1" optional="false" label="Dimension 2"/>
                 </when>
                 <when value="false">
                 </when>
@@ -121,8 +181,9 @@ with open("options.json", "w") as file:
                     <option value="true">Yes</option>
                 </param>
                 <when value="true">
-                    <param name="pca_value" type="text" value="" optional="false" label="Where the pca is stored" help="Example: obsm/X_pca"/>
-                    <param name="pca_range" type="text" value="[0,1]" optional="false" label="The range that should be plotted (comma-separated list)" help="It always plots the first 2 dimensions of the data. For example it plots PC1 vs PC2."/>
+                    <param name="pca_value" type="text" value="" optional="false" label="Where the pca is stored" help="Example: 'X_pca'. 'obsm/' gets prepended automatically."/>
+                    <param name="pca_dim1" type="integer" value="0" optional="false" label="Dimension 1" help="First dimension to be plotted (e.g. PC1)"/>
+                    <param name="pca_dim2" type="integer" value="1" optional="false" label="Dimension 2" help="Second dimension to be plotted (e.g. PC2)"/>
                 </when>
                 <when value="false">
                 </when>
@@ -133,14 +194,15 @@ with open("options.json", "w") as file:
                     <option value="true">Yes</option>
                 </param>
                 <when value="true">
-                    <param name="umap_value" type="text" value="" optional="false" label="Where the umap is stored" help="Example: obsm/X_umap"/>
-                    <param name="umap_range" type="text" value="[0,1]" optional="false" label="The range that should be plotted (comma-separated list)"/>
+                    <param name="umap_value" type="text" value="" optional="false" label="Where the umap is stored" help="Example: 'X_umap'. 'obsm/' gets prepended automatically."/>
+                    <param name="umap_dim1" type="integer" value="0" optional="false" label="Dimension 1"/>
+                    <param name="umap_dim2" type="integer" value="1" optional="false" label="Dimension 2"/>
                 </when>
                 <when value="false">
                 </when>
             </conditional>
             <param name="factors" type="text"  optional="true" value="" label="Factors" help="Comma-separated list of useful metadata to show per cell when hovering over them in the visualization. Example input: sample. 'obs/' gets prepended automatically."/>
-            <param name="sets" type="text" optional="true" value="" label="Sets" help="List of keys for grouping cells"/>
+            <param name="sets" type="text" optional="true" value="" label="Sets" help="Comma-separated list of keys for grouping cells. Example input for a simple set: 'cluster'. Example input for a scored set: 'celltype:celltype_prob'. Example input for both together: 'cluster, celltype:celltype_prob'"/>
             <param name="matrix" type="text" optional="true" value="X" label="Matrix" help="Expression matrix to use"/>
         </section>
         <param name="layout" type="text" label="Layout" optional="true" value="minimal" help="Type of predefined layout to use. Default value: minimal"/>
