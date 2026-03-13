@@ -81,6 +81,8 @@ def app_pair(global_conf, load_app_kwds=None, wsgi_preflight=True, **kwargs):
 
     # STANDARD CONTROLLER ROUTES
     webapp.add_ui_controllers("galaxy.webapps.galaxy.controllers", app)
+    webapp.add_route("/webatlas_zarr/{dataset_id}", controller="webatlas_zarr", action="serve", path_info="")
+    webapp.add_route("/webatlas_zarr/{dataset_id}/{path_info:.*}", controller="webatlas_zarr", action="serve")
     # Force /history to go to view of current
     webapp.add_route("/history", controller="history", action="view")
     webapp.add_route("/history/view/{id}", controller="history", action="view")
