@@ -131,7 +131,7 @@ def build_raster_options(
     raster_options = {"renderLayers": [], "schemaVersion": "0.0.2", "images": []}
     for img_type in images.keys():  # raw, label
         for img in images[img_type]:
-            image_name = os.path.splitext(os.path.basename(img["path"]))[0]
+            image_name = img.get("name") or os.path.splitext(os.path.basename(img["path"]))[0]
             channel_names = (
                 img["md"]["channel_names"]
                 if "channel_names" in img["md"] and len(img["md"]["channel_names"])
@@ -146,7 +146,7 @@ def build_raster_options(
             raster_options["images"].append(
                 {
                     "name": image_name,
-                    "url": os.path.join(url, os.path.basename(img["path"])),
+                    "url": f"{url}{img['path']}",
                     "type": "zarr",
                     "metadata": {
                         "isBitmask": isBitmask,
@@ -208,6 +208,14 @@ def write_json(
         SystemExit: If no valid files have been input
         SystemExit: If the layout has an error that can not be fixed
     """
+    if isinstance(file_paths, str):
+        file_paths = json.loads(file_paths)
+
+    if isinstance(images, str):
+        images = json.loads(images)
+
+    if isinstance(options, str):
+        options = json.loads(options)
 
     has_files = False
 
@@ -219,7 +227,7 @@ def write_json(
     config_dataset = config.add_dataset(str(dataset), str(dataset))
 
     coordination_types = defaultdict(lambda: cycle(iter([])))
-    file_paths_names = {x.split("-")[-1]: x for x in file_paths}
+
     dts = set([])
 
     if images.keys() and any([len(images[k]) for k in images.keys()]):
@@ -229,46 +237,40 @@ def write_json(
         )
         dts.add(dt.RASTER)
 
-    for data_type in DATA_TYPES:
-        for file_name, file_type in DATA_TYPES[data_type]:
-            # first file type found will be used in the config file
-            file_exists = False
-            if file_name in file_paths_names:
-                file_path = file_paths_names[file_name]
-                file_exists = True
+    for file_path in file_paths:
+        file_type = ft.ANNDATA_ZARR
 
-            if file_exists:
-                has_files = True
-                if file_type in DEFAULT_OPTIONS:
-                    file_options, file_dts = build_options(
-                        file_type, file_path, options or DEFAULT_OPTIONS[file_type]
-                    )
-                    # Set a coordination scope for any 'obsEmbedding'
-                    if "obsEmbedding" in file_options:
-                        coordination_types[ct.EMBEDDING_TYPE] = cycle(
-                            chain(
-                                coordination_types[ct.EMBEDDING_TYPE],
-                                [
-                                    config.set_coordination_value(
-                                        ct.EMBEDDING_TYPE.value,
-                                        k["embeddingType"],
-                                        k["embeddingType"],
-                                    )
-                                    for k in file_options["obsEmbedding"]
-                                ],
+        has_files = True
+        if file_type in DEFAULT_OPTIONS:
+            file_options, file_dts = build_options(
+                file_type, file_path, options or DEFAULT_OPTIONS[file_type]
+            )
+            # Set a coordination scope for any 'obsEmbedding'
+            if "obsEmbedding" in file_options:
+                coordination_types[ct.EMBEDDING_TYPE] = cycle(
+                    chain(
+                        coordination_types[ct.EMBEDDING_TYPE],
+                        [
+                            config.set_coordination_value(
+                                ct.EMBEDDING_TYPE.value,
+                                k["embeddingType"],
+                                k["embeddingType"],
                             )
-                        )
-                else:
-                    file_options, file_dts = None, []
-
-                if file_options and len(file_options):
-                    config_dataset.add_file(
-                        file_type,
-                        url=os.path.join(url, os.path.basename(file_path)),
-                        options=file_options,
+                            for k in file_options["obsEmbedding"]
+                        ],
                     )
-                    dts.update(file_dts)
-                    break
+                )
+        else:
+            file_options, file_dts = None, []
+
+        if file_options and len(file_options):
+            config_dataset.add_file(
+                file_type,
+                url=f"{url}{file_path}",
+                options=file_options,
+            )
+            dts.update(file_dts)
+            break
 
     if not has_files:
         raise SystemExit("No files to add to config file")
