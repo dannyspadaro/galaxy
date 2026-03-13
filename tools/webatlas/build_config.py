@@ -131,7 +131,7 @@ def build_raster_options(
     raster_options = {"renderLayers": [], "schemaVersion": "0.0.2", "images": []}
     for img_type in images.keys():  # raw, label
         for img in images[img_type]:
-            image_name = img.get("name") or os.path.splitext(os.path.basename(img["path"]))[0]
+            image_name = img.get("name")
             channel_names = (
                 img["md"]["channel_names"]
                 if "channel_names" in img["md"] and len(img["md"]["channel_names"])
