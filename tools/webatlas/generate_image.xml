@@ -5,18 +5,21 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
+    python "$image_name_script" &&
     #if $input_type_selector == "label_visium":
         #if $file_type_selector_visium == "h5ad":
             ln -s '$input_visium_h5ad' input.h5ad &&
             /usr/local/bin/generate_image.py --stem $stem --img_type label --file_type visium --file_path input.h5ad
             @VISIUM_LABEL_COMMAND@
-            mv $stem-label.tif $output_label
+            mv $stem-label.tif $output_label &&
+            mv image_name.txt $output_image_name
         #elif $file_type_selector_visium == "zip":
             mkdir unpacked_spaceranger &&
             unzip $input_visium_zip -d unpacked_spaceranger &&
             /usr/local/bin/generate_image.py --stem $stem --img_type label --file_type visium --file_path unpacked_spaceranger
             @VISIUM_LABEL_COMMAND@
-            mv $stem-label.tif $output_label
+            mv $stem-label.tif $output_label &&
+            mv image_name.txt $output_image_name
         #end if
     #elif $input_type_selector == "label_xenium":
         mkdir unpacked_xenium &&
@@ -29,22 +32,32 @@
         #end if
         }"
         &&
-        mv $stem-label.tif $output_label
+        mv $stem-label.tif $output_label &&
+        mv image_name.txt $output_image_name
     #elif $input_type_selector == "label_merscope":
         mkdir unpacked_merscope &&
         unzip $input_merscope_label -d unpacked_merscope &&
         /usr/local/bin/generate_image.py --stem $stem --img_type label --file_type merscope --file_path unpacked_merscope
         @REF_IMG_COMMAND@
         @Z_INDEX_COMMAND@
-        mv $stem-label.tif $output_label
+        mv $stem-label.tif $output_label &&
+        mv image_name.txt $output_image_name
     #elif $input_type_selector == "raw_merscope":
         mkdir unpacked_merscope &&
         unzip $input_merscope_raw -d unpacked_merscope &&
         /usr/local/bin/generate_image.py --stem $stem --img_type raw --file_type merscope --file_path unpacked_merscope
         @Z_INDEX_COMMAND@
-        mv $stem-raw.tif $output_raw
+        mv $stem-raw.tif $output_raw &&
+        mv image_name.txt $output_image_name
     #end if
     ]]></command>
+<configfiles>
+<configfile name="image_name_script"><![CDATA[
+with open("image_name.txt", "w") as file:
+    file.write("${input_type.stem}")
+]]>
+</configfile>
+</configfiles>
     <inputs>
         <conditional name="input_type">
             <param name="input_type_selector" type="select" label="Choose the type of input data" help="">
@@ -99,6 +112,7 @@
         <data name="output_raw" format="tiff" label="${tool.name} on ${on_string}: raw tif">
             <filter>input_type['input_type_selector'] == 'raw_merscope'</filter>
         </data>
+        <data name="output_image_name" format="txt" label="${tool.name} on ${on_string}: image name"/>
     </outputs>
     <tests>
     <test expect_num_outputs="1">
