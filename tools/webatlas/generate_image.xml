@@ -11,15 +11,13 @@
             ln -s '$input_visium_h5ad' input.h5ad &&
             /usr/local/bin/generate_image.py --stem $stem --img_type label --file_type visium --file_path input.h5ad
             @VISIUM_LABEL_COMMAND@
-            mv $stem-label.tif $output_label &&
-            mv image_name.txt $output_image_name
+            mv $stem-label.tif $output_label
         #elif $file_type_selector_visium == "zip":
             mkdir unpacked_spaceranger &&
             unzip $input_visium_zip -d unpacked_spaceranger &&
             /usr/local/bin/generate_image.py --stem $stem --img_type label --file_type visium --file_path unpacked_spaceranger
             @VISIUM_LABEL_COMMAND@
-            mv $stem-label.tif $output_label &&
-            mv image_name.txt $output_image_name
+            mv $stem-label.tif $output_label
         #end if
     #elif $input_type_selector == "label_xenium":
         mkdir unpacked_xenium &&
@@ -32,23 +30,20 @@
         #end if
         }"
         &&
-        mv $stem-label.tif $output_label &&
-        mv image_name.txt $output_image_name
+        mv $stem-label.tif $output_label
     #elif $input_type_selector == "label_merscope":
         mkdir unpacked_merscope &&
         unzip $input_merscope_label -d unpacked_merscope &&
         /usr/local/bin/generate_image.py --stem $stem --img_type label --file_type merscope --file_path unpacked_merscope
         @REF_IMG_COMMAND@
         @Z_INDEX_COMMAND@
-        mv $stem-label.tif $output_label &&
-        mv image_name.txt $output_image_name
+        mv $stem-label.tif $output_label
     #elif $input_type_selector == "raw_merscope":
         mkdir unpacked_merscope &&
         unzip $input_merscope_raw -d unpacked_merscope &&
         /usr/local/bin/generate_image.py --stem $stem --img_type raw --file_type merscope --file_path unpacked_merscope
         @Z_INDEX_COMMAND@
-        mv $stem-raw.tif $output_raw &&
-        mv image_name.txt $output_image_name
+        mv $stem-raw.tif $output_raw
     #end if
     ]]></command>
 <configfiles>
@@ -112,7 +107,6 @@ with open("image_name.txt", "w") as file:
         <data name="output_raw" format="tiff" label="${tool.name} on ${on_string}: raw tif">
             <filter>input_type['input_type_selector'] == 'raw_merscope'</filter>
         </data>
-        <data name="output_image_name" format="txt" label="${tool.name} on ${on_string}: image name"/>
     </outputs>
     <tests>
     <test expect_num_outputs="1">
@@ -139,7 +133,6 @@ with open("image_name.txt", "w") as file:
     <test expect_num_outputs="1">
         <conditional name="input_type">
             <param name="input_type_selector" value="label_visium"/>
-            <param name="ref_img" value="input_image.tiff"/>
             <param name="stem" value="visium_h5ad"/>
             <param name="sample_id" value=""/>
             <param name="relative_size" value=""/>
@@ -209,7 +202,7 @@ with open("image_name.txt", "w") as file:
         <conditional name="input_type">
             <param name="input_type_selector" value="label_xenium"/>
             <param name="input_xenium" value="xenium.zip"/>
-            <param name="ref_img" value="input_image.tiff"/>
+            <param name="ref_img" value="morphology.ome.tif"/>
             <param name="stem" value="xenium-breast-cancer"/>
             <param name="resolution" value="0.8"/>
         </conditional>
