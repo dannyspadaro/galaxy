@@ -59,7 +59,7 @@ with open(metadata_path) as md_file:
     md = json.load(md_file)
 
 with open(image_name_path) as img_name_file:
-    img_name = img_name_file.read()
+    img_name = img_name_file.read().strip()
 
 images[image_type].append({
     "path": zarr_name,
@@ -217,7 +217,6 @@ with open("options.json", "w") as file:
         <data name="output_json" format="vitessce.json" label="${tool.name} on ${on_string}: $project-$dataset-$config_filename_suffix"/>
     </outputs>
     <tests>
-    
     <test expect_num_outputs="1">
         <param name="input_file_paths" value="visium-breast-cancer-anndata.zarr"/>
         <param name="project" value="visium"/>
@@ -225,18 +224,49 @@ with open("options.json", "w") as file:
         <param name="layout" value="advanced"/>
         <param name="custom_layout" value=""/>
         <param name="title" value="Visium CytAssist - High resolution mapping of the breast cancer tumor microenvironment"/>
+        <param name="description" value="test description"/>
         <param name="config_filename_suffix" value="config.json"/>
         <repeat name="rep_images">
             <param name="input_image_type" value="label"/>
-            <param name="input_image" value="input.zarr"/>
+            <param name="input_image" value="visium-breast-cancer-label.zarr"/>
             <param name="input_metadata" value="metadata.json"/>
+            <param name="input_image_name" value="image_name.txt"/>
+        </repeat>
+        <repeat name="rep_images">
+            <param name="input_image_type" value="raw"/>
+            <param name="input_image" value="visium-breast-cancer-raw.zarr"/>
+            <param name="input_metadata" value="metadata.json"/>
+            <param name="input_image_name" value="image_name.txt"/>
         </repeat>
         <section name="sec_vitessce_options">
-
+            <param name="spatial" value="spatial"/>
+            <conditional name="mappings_spatial_conditional">
+                <param name="mappings_spatial" value="false"/>
+            </conditional>
+            <conditional name="mappings_pca_conditional">
+                <param name="mappings_pca" value="false"/>
+            </conditional>
+            <conditional name="mappings_umap_conditional">
+                <param name="mappings_umap" value="false"/>
+            </conditional>
+            <param name="factors" value=""/>
+            <param name="sets" value=""/>
+            <param name="matrix" value="X"/>
         </section>
         <output name="output_json">
             <assert_contents>
-                <has_size value="3012" delta="10"/>
+                <has_line line='  "name": "Visium CytAssist - High resolution mapping of the breast cancer tumor microenvironment",'/>
+                <has_line line='  "description": "test description",'/>
+                <has_line line='      "uid": "breast-cancer",'/>
+                <has_line line='      "name": "breast-cancer",'/>
+                <has_line line='          "fileType": "raster.json",'/>
+                <has_line line='                "name": "visium-breast-cancer-raw",'/>
+                <has_line line='                "name": "visium-breast-cancer-label",'/>
+                <has_line line='          "fileType": "anndata.zarr",'/>
+                <has_line line='              "path": "obsm/spatial"'/>
+                <has_line line='            "obsFeatureMatrix": {'/>
+                <has_line line='              "path": "X"'/>
+                <has_size value="3968" delta="300"/>
             </assert_contents>
         </output>
     </test>
