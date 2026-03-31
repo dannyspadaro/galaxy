@@ -4,13 +4,12 @@
         <import>macros.xml</import>
     </macros>
     <requirements>
-        <container type="docker">haniffalab/webatlas-pipeline-build-config:0.5.3</container>
+        <container type="docker">dannyspadaro/webatlas-pipeline-build-config:0.5.3-galaxy</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
         python "$images_script" &&
         python "$options_script" &&
-        ## /usr/local/bin/build_config.py
-        python "${__tool_directory__}/build_config.py"
+        /usr/local/bin/build_config.py
         #if $project:
             --project '$project'
         #end if
@@ -262,7 +261,7 @@ with open("options.json", "w") as file:
                 <has_line line='              "path": "obsm/spatial"'/>
                 <has_line line='            "obsFeatureMatrix": {'/>
                 <has_line line='              "path": "X"'/>
-                <has_size value="3968" delta="300"/>
+                <has_size value="4274" delta="300"/>
             </assert_contents>
         </output>
     </test>
