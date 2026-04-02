@@ -226,25 +226,24 @@
             </assert_contents>
         </output>
     </test>
-    
 
-    <!-- <test expect_num_outputs="1">
+    <test expect_num_outputs="1">
         <conditional name="img_type">
             <param name="img_type_selector" value="label"/>
             <conditional name="input_type">
                 <param name="input_type_selector" value="xenium"/>
-                <param name="input_xenium" value="xenium.zip"/>
-                <param name="ref_img" value="morphology.ome.tif"/>
-                <param name="stem" value="xenium-breast-cancer"/>
-                <param name="resolution" value="0.8"/>
+                <param name="input_xenium" value="Xenium_Prime_MultiCellSeg_Mouse_Ileum_tiny_outs.zip"/>
+                <param name="ref_img" value="morphology_tiny.ome.tif"/>
+                <param name="stem" value="xenium-tiny"/>
+                <param name="resolution" value="0.2125"/>
             </conditional>
         </conditional>
         <output name="output_label">
             <assert_contents>
-                <has_size value="1683323056" delta="100"/>
+                <has_size value="20389114" delta="1000"/>
             </assert_contents>
         </output>
-    </test> -->
+    </test>
     
     <test expect_num_outputs="1">
         <conditional name="img_type">
@@ -253,7 +252,7 @@
                 <param name="input_type_selector" value="merscope"/>
                 <param name="input_merscope_label" value="merscope.zip"/>
                 <param name="ref_img" value="shape.tiff"/>
-                <param name="stem" value="merscope"/>
+                <param name="stem" value="merscope-label"/>
                 <param name="z_index" value="0"/>
             </conditional>
         </conditional>
@@ -264,20 +263,19 @@
         </output>
     </test>
     
-    <!-- MISSING TEST DATA -->
-    <!-- <test expect_num_outputs="1">
+    <test expect_num_outputs="1">
         <conditional name="img_type">
             <param name="img_type_selector" value="raw"/>
-            <param name="input_merscope_raw" value="PLACEHOLDER.zip"/>
-            <param name="stem" value=""/>
+            <param name="input_merscope_raw" value="merscope.zip"/>
+            <param name="stem" value="merscope-raw"/>
             <param name="z_index" value="0"/>
         </conditional>
-        <output name="output_raw">
+        <output name="output_label">
             <assert_contents>
-                <has_size value="100" delta="100"/>
+                <has_size value="62618255" delta="1000"/>
             </assert_contents>
         </output>
-    </test> -->
+    </test>
     </tests>
     <help><![CDATA[
 

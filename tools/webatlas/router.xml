@@ -159,16 +159,18 @@
             <param name="stem" value="h5ad"/>
             <param name="chunk_size" value="10"/>
             <param name="compute_embeddings" value="false"/>
-            <param name="var_index" value=""/>
-            <conditional name="obs_subset_conditional">
-                <param name="obs_subset" value="false"/>
-            </conditional>
-            <conditional name="var_subset_conditional">
-                <param name="var_subset" value="false"/>
-            </conditional>
-            <conditional name="batch_processing_conditional">
-                <param name="batch_processing" value="false"/>
-            </conditional>
+            <section name="sec_advanced_options">
+                <param name="var_index" value=""/>
+                <conditional name="obs_subset_conditional">
+                    <param name="obs_subset" value="false"/>
+                </conditional>
+                <conditional name="var_subset_conditional">
+                    <param name="var_subset" value="false"/>
+                </conditional>
+                <conditional name="batch_processing_conditional">
+                    <param name="batch_processing" value="false"/>
+                </conditional>
+            </section>
         </conditional>
         <output name="output_zarr">
             <assert_contents>
@@ -184,18 +186,20 @@
             <param name="stem" value="h5ad"/>
             <param name="chunk_size" value="10"/>
             <param name="compute_embeddings" value="false"/>
-            <param name="var_index" value=""/>
-            <conditional name="obs_subset_conditional">
-                <param name="obs_subset" value="true"/>
-                <param name="obs_subset_column" value="in_tissue"/>
-                <param name="obs_subset_values" value="1"/>
-            </conditional>
-            <conditional name="var_subset_conditional">
-                <param name="var_subset" value="false"/>
-            </conditional>
-            <conditional name="batch_processing_conditional">
-                <param name="batch_processing" value="false"/>
-            </conditional>
+            <section name="sec_advanced_options">
+                <param name="var_index" value=""/>
+                <conditional name="obs_subset_conditional">
+                    <param name="obs_subset" value="true"/>
+                    <param name="obs_subset_column" value="in_tissue"/>
+                    <param name="obs_subset_values" value="1"/>
+                </conditional>
+                <conditional name="var_subset_conditional">
+                    <param name="var_subset" value="false"/>
+                </conditional>
+                <conditional name="batch_processing_conditional">
+                    <param name="batch_processing" value="false"/>
+                </conditional>
+            </section>
         </conditional>
         <output name="output_zarr">
             <assert_contents>
@@ -211,18 +215,20 @@
             <param name="stem" value="h5ad"/>
             <param name="chunk_size" value="10"/>
             <param name="compute_embeddings" value="false"/>
-            <param name="var_index" value=""/>
-            <conditional name="obs_subset_conditional">
-                <param name="obs_subset" value="false"/>
-            </conditional>
-            <conditional name="var_subset_conditional">
-                <param name="var_subset" value="true"/>
-                <param name="var_subset_column" value="gene_ids"/>
-                <param name="var_subset_values" value="A1CF,MSN"/>
-            </conditional>
-            <conditional name="batch_processing_conditional">
-                <param name="batch_processing" value="false"/>
-            </conditional>
+            <section name="sec_advanced_options">
+                <param name="var_index" value=""/>
+                <conditional name="obs_subset_conditional">
+                    <param name="obs_subset" value="false"/>
+                </conditional>
+                <conditional name="var_subset_conditional">
+                    <param name="var_subset" value="true"/>
+                    <param name="var_subset_column" value="gene_ids"/>
+                    <param name="var_subset_values" value="A1CF,MSN"/>
+                </conditional>
+                <conditional name="batch_processing_conditional">
+                    <param name="batch_processing" value="false"/>
+                </conditional>
+            </section>
         </conditional>
         <output name="output_zarr">
             <assert_contents>
@@ -238,21 +244,23 @@
             <param name="stem" value="h5ad"/>
             <param name="chunk_size" value="10"/>
             <param name="compute_embeddings" value="false"/>
-            <param name="var_index" value=""/>
-            <conditional name="obs_subset_conditional">
-                <param name="obs_subset" value="true"/>
-                <param name="obs_subset_column" value="in_tissue"/>
-                <param name="obs_subset_values" value="1"/>
-            </conditional>
-            <conditional name="var_subset_conditional">
-                <param name="var_subset" value="true"/>
-                <param name="var_subset_column" value="gene_ids"/>
-                <param name="var_subset_values" value="A1CF,MSN"/>
-            </conditional>
-            <conditional name="batch_processing_conditional">
-                <param name="batch_processing" value="true"/>
-                <param name="batch_size" value="11000"/>
-            </conditional>
+            <section name="sec_advanced_options">
+                <param name="var_index" value=""/>
+                <conditional name="obs_subset_conditional">
+                    <param name="obs_subset" value="true"/>
+                    <param name="obs_subset_column" value="in_tissue"/>
+                    <param name="obs_subset_values" value="1"/>
+                </conditional>
+                <conditional name="var_subset_conditional">
+                    <param name="var_subset" value="true"/>
+                    <param name="var_subset_column" value="gene_ids"/>
+                    <param name="var_subset_values" value="A1CF,MSN"/>
+                </conditional>
+                <conditional name="batch_processing_conditional">
+                    <param name="batch_processing" value="true"/>
+                    <param name="batch_size" value="11000"/>
+                </conditional>
+            </section>
         </conditional>
         <output name="output_zarr">
             <assert_contents>
@@ -271,21 +279,23 @@
             <param name="load_raw" value="false"/>
             <param name="chunk_size" value="10"/>
             <param name="compute_embeddings" value="false"/>
-            <param name="var_index" value=""/>
+            <section name="sec_advanced_options">
+                <param name="var_index" value=""/>
+                <conditional name="obs_subset_conditional">
+                    <param name="obs_subset" value="false"/>
+                </conditional>
+                <conditional name="var_subset_conditional">
+                    <param name="var_subset" value="false"/>
+                </conditional>
+                <conditional name="batch_processing_conditional">
+                    <param name="batch_processing" value="false"/>
+                </conditional>
+            </section>
             <param name="save_h5ad" value="false"/>
-            <conditional name="obs_subset_conditional">
-                <param name="obs_subset" value="false"/>
-            </conditional>
-            <conditional name="var_subset_conditional">
-                <param name="var_subset" value="false"/>
-            </conditional>
-            <conditional name="batch_processing_conditional">
-                <param name="batch_processing" value="false"/>
-            </conditional>
         </conditional>
         <output name="output_zarr">
             <assert_contents>
-                <has_size value="78828151" delta="100"/>
+                <has_size value="78828151" delta="10000"/>
             </assert_contents>
         </output>
     </test>
@@ -300,58 +310,67 @@
             <param name="load_raw" value="false"/>
             <param name="chunk_size" value="10"/>
             <param name="compute_embeddings" value="false"/>
-            <param name="var_index" value=""/>
+            <section name="sec_advanced_options">
+                <param name="var_index" value=""/>
+                <conditional name="obs_subset_conditional">
+                    <param name="obs_subset" value="false"/>
+                </conditional>
+                <conditional name="var_subset_conditional">
+                    <param name="var_subset" value="false"/>
+                </conditional>
+                <conditional name="batch_processing_conditional">
+                    <param name="batch_processing" value="false"/>
+                </conditional>
+            </section>
             <param name="save_h5ad" value="true"/>
-            <conditional name="obs_subset_conditional">
-                <param name="obs_subset" value="false"/>
-            </conditional>
-            <conditional name="var_subset_conditional">
-                <param name="var_subset" value="false"/>
-            </conditional>
-            <conditional name="batch_processing_conditional">
-                <param name="batch_processing" value="false"/>
-            </conditional>
         </conditional>
         <output name="output_zarr">
             <assert_contents>
-                <has_size value="78828151" delta="100"/>
+                <has_size value="78828151" delta="10000"/>
             </assert_contents>
         </output>
         <output name="output_h5ad">
             <assert_contents>
-                <has_size value="288444650" delta="100"/>
+                <has_size value="288444650" delta="300000"/>
             </assert_contents>
         </output>
     </test>
 
-    <!-- <test expect_num_outputs="1">
+    <test expect_num_outputs="2">
         <conditional name="input_type">
             <param name="input_type_selector" value="xenium"/>
-            <param name="input_xenium" value="xenium.zip"/>
-            <param name="stem" value="xenium-breast-cancer"/>
+            <param name="input_xenium" value="Xenium_Prime_MultiCellSeg_Mouse_Ileum_tiny_outs.zip"/>
+            <param name="stem" value="xenium-tiny"/>
             <param name="spatial_as_pixel" value="true"/>
             <param name="resolution" value="0.2125"/>
             <param name="chunk_size" value="10"/>
             <param name="compute_embeddings" value="false"/>
-            <param name="var_index" value=""/>
-            <param name="save_h5ad" value="false"/>
-            <conditional name="obs_subset_conditional">
-                <param name="obs_subset" value="false"/>
-            </conditional>
-            <conditional name="var_subset_conditional">
-                <param name="var_subset" value="false"/>
-            </conditional>
-            <conditional name="batch_processing_conditional">
-                <param name="batch_processing" value="false"/>
-            </conditional>
+            <section name="sec_advanced_options">
+                <param name="var_index" value=""/>
+                <conditional name="obs_subset_conditional">
+                    <param name="obs_subset" value="false"/>
+                </conditional>
+                <conditional name="var_subset_conditional">
+                    <param name="var_subset" value="false"/>
+                </conditional>
+                <conditional name="batch_processing_conditional">
+                    <param name="batch_processing" value="false"/>
+                </conditional>
+            </section>
+            <param name="save_h5ad" value="true"/>
         </conditional>
         <output name="output_zarr">
             <assert_contents>
-                <has_size value="100" delta="20"/>
+                <has_size value="295772" delta="5000"/>
             </assert_contents>
         </output>
-    </test> -->
-    
+        <output name="output_h5ad">
+            <assert_contents>
+                <has_size value="591804" delta="10000"/>
+            </assert_contents>
+        </output>
+    </test>
+
     <test expect_num_outputs="1">
         <conditional name="input_type">
             <param name="input_type_selector" value="merscope"/>
@@ -360,17 +379,19 @@
             <param name="filter_prefix" value="Blank-"/>
             <param name="chunk_size" value="10"/>
             <param name="compute_embeddings" value="false"/>
-            <param name="var_index" value=""/>
+            <section name="sec_advanced_options">
+                <param name="var_index" value=""/>
+                <conditional name="obs_subset_conditional">
+                    <param name="obs_subset" value="false"/>
+                </conditional>
+                <conditional name="var_subset_conditional">
+                    <param name="var_subset" value="false"/>
+                </conditional>
+                <conditional name="batch_processing_conditional">
+                    <param name="batch_processing" value="false"/>
+                </conditional>
+            </section>
             <param name="save_h5ad" value="false"/>
-            <conditional name="obs_subset_conditional">
-                <param name="obs_subset" value="false"/>
-            </conditional>
-            <conditional name="var_subset_conditional">
-                <param name="var_subset" value="false"/>
-            </conditional>
-            <conditional name="batch_processing_conditional">
-                <param name="batch_processing" value="false"/>
-            </conditional>
         </conditional>
         <output name="output_zarr">
             <assert_contents>
