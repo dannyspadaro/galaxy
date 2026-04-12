@@ -239,7 +239,7 @@ with open("options.json", "w") as file:
             <param argument="--config_filename_suffix" type="text" value="config.json" optional="true" label="Config filename suffix" help="Default value: config.json">
                 <expand macro="sanitizer_options"/>
             </param>
-            <param argument="--custom_layout" type="text" value="" area="true" optional="true" label="Custom layout" help="Text defining a Vitessce layout following its alternative syntax. See tool help section for more details.">
+            <param argument="--custom_layout" type="text" value="" optional="true" label="Custom layout" help="Text defining a Vitessce layout following its alternative syntax. See tool help section for more details.">
                 <expand macro="sanitizer_printable"/>
             </param>
         </section>
