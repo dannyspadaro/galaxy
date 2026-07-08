@@ -1,48 +1,92 @@
 <tool id="alevin_fry_generate_permit_list" name="Alevin-Fry Generate Permit List" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
-    <description>Generate a permit list of barcodes from a RAD file</description>
+    <description>of barcodes from a RAD file</description>
     <macros>
         <import>macros.xml</import>
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
-        mkdir inputs &&
-        ln -s '$input' inputs/map.rad &&
-        mkdir outputs &&
-        ##ln -s '$output1' outputs &&
-        alevin-fry generate-permit-list $KNEEDISTANCE --input inputs --expected-ori '$EXPECTEDORI' --output-dir outputs
+        mkdir input &&
+        ln -s '$input_rad' input/map.rad &&
+        mkdir output &&
+        alevin-fry generate-permit-list --input input --expected-ori $expectedori --output-dir output
+        #if $barcode.barcode_selection == 'knee-distance':
+            --knee-distance
+        #else if $barcode.barcode_selection == 'force-cells':
+            --force-cells $barcode.force_ncells
+        #else if $barcode.barcode_selection == 'valid-bc':
+            --valid-bc $barcode.bcfile
+        #else if $barcode.barcode_selection == 'unfiltered-pl':
+            --unfiltered-pl $barcode.plist
+            --min-reads $barcode.min_reads
+        #else if $barcode.barcode_selection == 'expect-cells':
+            --expect-cells $barcode.expect_ncells
+        #end if
+        &&
+        mv output/all_freq.bin $output_all_freq &&
+        mv output/permit_freq.bin $output_permit_freq &&
+        mv output/permit_map.bin $output_permit_map &&
+        mv output/generate_permit_list.json $output_json
     ]]></command>
     <inputs>
-        <param type="data" name="input" label="map RAD file" format="rad" help="The input file has to be called 'map.rad' for Alevin Fry to work"/>
-        <param type="select" name="EXPECTEDORI" label="Expected orientation">
-            <option value="fw">fw</option>
-            <option value="rc">rc</option>
+        <param name="input_rad" type="data" format="rad" label="Input RAD file"/>
+        <param name="expectedori" type="select" label="Expected orientation">
+            <option value="fw">fw (forward)</option>
+            <option value="rc">rc (reverse complement)</option>
             <option value="both">both</option>
             <option value="either">either</option>
         </param>
-        <param type="boolean" name="KNEEDISTANCE" truevalue="--knee-distance" falsevalue="" label="Attempt to determine the number of barcodes to keep using the knee-distance method."/>
-        <param name="barcode_selection" type="select" label="" help="TODO">
-            <option value="knee-distance">Knee-distance method</option>
-            <option value="force-cells">TODO: force-cells</option>
-            <option value="valid-bc">TODO: valid-bc</option>
-            <option value="unfiltered-pl">TODO: unfiltered-pl</option>
-            <option value="expect-cells">TODO: expect-cells</option>
-        </param>
+        <conditional name="barcode">
+            <param name="barcode_selection" type="select" label="Barcode selection method">
+                <option value="knee-distance">knee-distance method</option>
+                <option value="force-cells">force-cells</option>
+                <option value="valid-bc">valid-bc</option>
+                <option value="unfiltered-pl">unfiltered-pl</option>
+                <option value="expect-cells">expect-cells</option>
+            </param>
+            <when value="knee-distance"/>
+            <when value="force-cells">
+                <param name="force_ncells" type="integer" min="1" label="Number of barcodes to keep" help="This amount of the most frequent barcodes will be considered part of the permit list."/>
+            </when>
+            <when value="valid-bc">
+                <param name="bcfile" type="data" format="txt,tabular" label="List of true, filtered barcodes" help="Barcodes in this list will be considered to correspond to true and filtered cells for this sample."/>
+            </when>
+            <when value="unfiltered-pl">
+                <param name="plist" type="data" format="txt,tabular" label="Unfiltered barcode permit list" help="List of possible barcodes for the sample, e.g. an external permit list like the 10x v2 or the 10x v3."/>
+                <param name="min_reads" type="integer" min="1" value="10" label="min reads" help="Only barcodes that are present at least this often are retained and considered as present cells."/>
+            </when>
+            <when value="expect-cells">
+                <param name="expect_ncells" type="integer" min="1" label="Expected number of cells" help="Value around which a robust cutoff will be chosen."/>
+            </when>
+        </conditional>
     </inputs>
     <outputs>
-        <data name="output1" label="${tool.name} on ${on_string}: all_freq" format="binary" from_work_dir="outputs/all_freq.bin"/>
-        <data name="output2" label="${tool.name} on ${on_string}: permit_freq" format="binary" from_work_dir="outputs/permit_freq.bin"/>
-        <data name="output3" label="${tool.name} on ${on_string}: permit_map" format="binary" from_work_dir="outputs/permit_map.bin"/>
-        <data name="output4" label="${tool.name} on ${on_string}: generate_permit_list" format="json" from_work_dir="outputs/generate_permit_list.json"/>
+        <data name="output_all_freq" format="binary" label="${tool.name} on ${on_string}: all_freq"/>
+        <data name="output_permit_freq" format="binary" label="${tool.name} on ${on_string}: permit_freq"/>
+        <data name="output_permit_map" format="binary" label="${tool.name} on ${on_string}: permit_map"/>
+        <data name="output_json" format="json" label="${tool.name} on ${on_string}: generate_permit_list"/>
     </outputs>
     <tests>
     <test expect_num_outputs="4">
-        <param name="input" value="gpltest/input"/>
-        <param name="EXPECTEDORI" value="either"/>
-        <param name="KNEEDISTANCE" value="true"/>
-        <output name="output1" file="gpltest/output/all_freq.bin"/>
-        <output name="output2" file="gpltest/output/permit_freq.bin"/>
-        <output name="output3" file="gpltest/output/permit_map.bin"/>
-        <output name="output4" file="gpltest/output/generate_permit_list.json"/>
+        <param name="input_rad" value="gpltest/input"/>
+        <param name="expectedori" value="either"/>
+        <conditional name="barcode">
+            <param name="barcode_selection" value="knee-distance"/>
+        </conditional>
+        <output name="output_all_freq">
+            <assert_contents>
+                <has_size value="114792" delta="0"/>
+            </assert_contents>
+        </output>
+        <output name="output_permit_freq">
+            <assert_contents>
+                <has_size value="32312" delta="0"/>
+            </assert_contents>
+        </output>
+        <output name="output_permit_map">
+            <assert_contents>
+                <has_size value="3848936" delta="0"/>
+            </assert_contents>
+        </output>
     </test>
     </tests>
     <help>

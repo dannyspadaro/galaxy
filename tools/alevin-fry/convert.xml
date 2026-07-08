@@ -1,5 +1,5 @@
 <tool id="alevin_fry_convert" name="Alevin-Fry Convert" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
-    <description>Convert BAM/SAM to RAD</description>
+    <description>BAM/SAM to RAD</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -7,9 +7,12 @@
     <command detect_errors="exit_code"><![CDATA[
         ln -s '$input' input.bam &&
         alevin-fry convert --bam input.bam --output '$output'
+        #if $filter_best:
+            --filter_best
     ]]></command>
     <inputs>
         <param type="data" name="input" label="BAM or SAM file" format="bam,sam"/>
+        <param argument="--filter_best" type="boolean" checked="false" label="filter best" help="Keep only the highest scoring alignments for each read"/>
     </inputs>
     <outputs>
         <data name="output" label="${tool.name} on ${on_string}" format="rad"/>
