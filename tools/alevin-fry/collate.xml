@@ -36,7 +36,7 @@
     <tests>
     <test expect_num_outputs="3">
         <param name="input_permit_list" value="permit_list"/>
-        <param name="input_rad" value="map.rad"/>
+        <param name="input_rad" value="input_rad/map.rad"/>
         <param name="collation_mode" value="two_round"/>
         <output name="output_rad">
             <assert_contents>

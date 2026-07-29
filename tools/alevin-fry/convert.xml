@@ -6,21 +6,28 @@
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
         ln -s '$input' input.bam &&
-        alevin-fry convert --bam input.bam --output '$output'
+        alevin-fry convert --bam input.bam --output map.rad
         #if $filter_best:
             --filter_best
+        #end if
+        &&
+        mv map.rad $output_rad
     ]]></command>
     <inputs>
         <param type="data" name="input" label="BAM or SAM file" format="bam,sam"/>
         <param argument="--filter_best" type="boolean" checked="false" label="filter best" help="Keep only the highest scoring alignments for each read"/>
     </inputs>
     <outputs>
-        <data name="output" label="${tool.name} on ${on_string}" format="rad"/>
+        <data name="output_rad" label="${tool.name} on ${on_string}" format="rad"/>
     </outputs>
     <tests>
         <test>
             <param name="input" value="convert/input.bam"/>
-            <output name="output" file="convert/output.rad"/>
+            <output name="output_rad">
+                <assert_contents>
+                    <has_size value="516" delta="0"/>
+                </assert_contents>
+            </output>
         </test>
     </tests>
     <help><![CDATA[
