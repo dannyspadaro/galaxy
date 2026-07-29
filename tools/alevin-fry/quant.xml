@@ -1,0 +1,68 @@
+<tool id="alevin_fry_quant" name="Alevin-Fry quant" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
+    <description>Quantify expression from a collated RAD file</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
+    <command detect_errors="exit_code"><![CDATA[
+    ]]></command>
+    <inputs>
+        <param name="input_collated_rad" type="data" format="rad" label="Collated RAD file"/>
+        <param name="input_transcript_to_gene_map" type="data" format="tsv" label="Transcript to gene map"/>
+        <conditional name="resolution">
+            <param name="resolution_selection" type="select" label="Resolution">
+                <option value="cr_like">cr-like</option>
+                <option value="cr_like_em">cr-like-em</option>
+                <option value="parsimony_em_full">parsimony-em/full</option>
+                <option value="parsimony">parsimony</option>
+                <option value="parsimony_gene">parsimony-gene</option>
+                <option value="parsimony_gene_em">parsimony-gene-em</option>
+                <option value="trivial">trivial</option>
+            </param>
+            <when value="cr_like">
+
+            </when>
+            <when value="cr_like_em">
+
+            </when>
+            <when value="parsimony_em_full">
+
+            </when>
+            <when value="parsimony">
+
+            </when>
+            <when value="parsimony_gene">
+
+            </when>
+            <when value="parsimony_gene_em">
+
+            </when>
+            <when value="trivial">
+
+            </when>
+        </conditional>
+        <section name="sec_advanced_options" title="Advanced options" expanded="false">
+            <param name="dump_eqclasses" type="boolean" label="Write equivalence class counts file" help="Writes a gene-level, UMI-deduplicated equivalence class counts file"/>
+            <param name="num_bootstraps" type="integer" min="0" value="0" label="Number of bootstraps to use" help="Writes bootstrap inferential replicate information to the outputs. This flag is only meaningful with the cr-like-em or full resolution modes."/>
+            <param name="init_uniform" type="boolean" checked="false" label="Uniform sampling"/>
+            <param name="summary_stat" type="boolean" checked="false" label="Store only summary statistics"/>
+            <param name="use_mtx" type="boolean" checked="true" label="Write output matrix in market format"/>
+            <param name="quant_subset" type="data" format="tsv,txt,tabular" optional="true" label="List of barcodes to quantify" help="Barcodes not in this list will be ignored during inference and will not appear in the output quantification matrix."/>
+            <param name="multi_saple_output" type="select" label="Multi-sample output mode">
+                <option value="separate">separate</option>
+                <option value="combined">combined</option>
+                <option value="both">both</option>
+            </param>
+        </section>
+    </inputs>
+    <outputs>
+
+    </outputs>
+    <tests>
+
+    </tests>
+    <help>
+        help
+    </help>
+    <expand macro="citations"/>
+</tool>
