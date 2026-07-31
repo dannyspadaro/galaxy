@@ -5,50 +5,82 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
+    mkdir input_rad &&
+    ln -s '$input_collated_rad' input_rad/map.collated.rad &&
+    ln -s '$input_transcript_to_gene_map' t2g.tsv &&
+    mkdir output &&
+    #if $sec_advanced_options.quant_subset:
+        ln -s '$sec_advanced_options.quant_subset' quant_subset.tsv &&
+    #end if
+    
+    alevin-fry quant --input-dir input_rad --tg-map $input_transcript_to_gene_map t2g.tsv --output-dir output
+    #if $resolution.resolution_selection == 'cr_like':
+        --resolution cr-like
+    #else if $resolution.resolution_selection == 'cr-like-em':
+        --resolution cr-like-em
+    #else if $resolution.resolution_selection == 'parsimony-em':
+        --resolution parsimony-em
+    #else if $resolution.resolution_selection == 'parsimony':
+        --resolution parsimony
+    #else if $resolution.resolution_selection == 'parsimony_gene':
+        --resolution parsimony-gene
+    #else if $resolution.resolution_selection == 'parsimony-gene-em':
+        --resolution parsimony-gene-em
+    #else if $resolution.resolution_selection == 'trivial':
+        --resolution trivial
+    #end if
+
+    #if $sec_advanced_options.dump_eqclasses == 'true':
+        --dump-dump_eqclasses
+    #end if
+
+    #if not $sec_advanced_options.num_bootstraps == '0':
+        --num-bootstraps '$sec_advanced_options.num_bootstraps'
+        #if $sec_advanced_options.summary_stat == 'true':
+            --summary-stat
+        #end if
+    #end if
+
+    #if $sec_advanced_options.quant_subset:
+        --quant-subset quant_subset.tsv
+    #end if
+
+    #if $sec_advanced_options.multi_sample_output == 'separate':
+        --multi-sample-output separate
+    #else if $sec_advanced_options.multi_sample_output == 'combined':
+        --multi-sample-output combined
+    #else if $sec_advanced_options.multi_sample_output == 'both':
+        --multi-sample-output both
+    #end if
+    &&
+    #if $sec_advanced_options.dump_eqclasses == 'true':
+        mv output/alevin/gene_eqclass.txt.gz $output_gene_eqclasses &&
+    #end if
+    mv output/alevin/quants_mat.mtx $output_mat_mtx &&
+    mv output/alevin/quants_mat_rows.txt $output_mat_rows &&
+    mv output/alevin/quants_mat_cols.txt $output_mat_cols &&
+    mv output/featureDump.txt $output_feature_dump
     ]]></command>
     <inputs>
         <param name="input_collated_rad" type="data" format="rad" label="Collated RAD file"/>
         <param name="input_transcript_to_gene_map" type="data" format="tsv" label="Transcript to gene map"/>
-        <conditional name="resolution">
-            <param name="resolution_selection" type="select" label="Resolution">
-                <option value="cr_like">cr-like</option>
-                <option value="cr_like_em">cr-like-em</option>
-                <option value="parsimony_em_full">parsimony-em/full</option>
-                <option value="parsimony">parsimony</option>
-                <option value="parsimony_gene">parsimony-gene</option>
-                <option value="parsimony_gene_em">parsimony-gene-em</option>
-                <option value="trivial">trivial</option>
-            </param>
-            <when value="cr_like">
-
-            </when>
-            <when value="cr_like_em">
-
-            </when>
-            <when value="parsimony_em_full">
-
-            </when>
-            <when value="parsimony">
-
-            </when>
-            <when value="parsimony_gene">
-
-            </when>
-            <when value="parsimony_gene_em">
-
-            </when>
-            <when value="trivial">
-
-            </when>
-        </conditional>
+        <param name="resolution_selection" type="select" label="Resolution">
+            <option value="cr_like">cr-like</option>
+            <option value="cr_like_em">cr-like-em</option>
+            <option value="parsimony_em">parsimony-em</option>
+            <option value="parsimony">parsimony</option>
+            <option value="parsimony_gene">parsimony-gene</option>
+            <option value="parsimony_gene_em">parsimony-gene-em</option>
+            <option value="trivial">trivial</option>
+        </param>
         <section name="sec_advanced_options" title="Advanced options" expanded="false">
-            <param name="dump_eqclasses" type="boolean" label="Write equivalence class counts file" help="Writes a gene-level, UMI-deduplicated equivalence class counts file"/>
-            <param name="num_bootstraps" type="integer" min="0" value="0" label="Number of bootstraps to use" help="Writes bootstrap inferential replicate information to the outputs. This flag is only meaningful with the cr-like-em or full resolution modes."/>
+            <param name="dump_eqclasses" type="boolean" checked="false" label="Write equivalence class counts file" help="Writes a gene-level, UMI-deduplicated equivalence class counts file. This can be used for subsequent analyses where gene-ambiguous reads have been neither resovled nor discarded."/>
+            <!-- did not restrict num_bootstraps to only be usable with cr_like_em and parsimony_em, because the alevin-fry documentation is based on version 0.11.0, so this information could be outdated. Thus num_bootstraps is unrestricted for the case that it may have more functionality in recent versions.  -->
+            <param name="num_bootstraps" type="integer" min="0" value="0" label="Number of bootstraps to use" help="Writes bootstrap inferential replicate information to the outputs. This flag is only meaningful with the resolution modes cr-like-em and parsimony-em."/>
             <param name="init_uniform" type="boolean" checked="false" label="Uniform sampling"/>
-            <param name="summary_stat" type="boolean" checked="false" label="Store only summary statistics"/>
-            <param name="use_mtx" type="boolean" checked="true" label="Write output matrix in market format"/>
-            <param name="quant_subset" type="data" format="tsv,txt,tabular" optional="true" label="List of barcodes to quantify" help="Barcodes not in this list will be ignored during inference and will not appear in the output quantification matrix."/>
-            <param name="multi_saple_output" type="select" label="Multi-sample output mode">
+            <param name="summary_stat" type="boolean" checked="false" label="Store only summary statistics (of bootstrap)" help="Only applicable when bootstrap is used. Writes the summary statistics of the bootstrap replicates (i.e. the mean and variance of the inferential replicates)."/>
+            <param name="quant_subset" type="data" format="tsv" optional="true" label="List of barcodes to quantify" help="Barcodes not in this list will be ignored during inference and will not appear in the output quantification matrix."/>
+            <param name="multi_sample_output" type="select" label="Multi-sample output mode" help="Output mode for multi-sample data. Either per-sample matrices, one combined matrix, or both. Default value: separate.">
                 <option value="separate">separate</option>
                 <option value="combined">combined</option>
                 <option value="both">both</option>
@@ -56,10 +88,16 @@
         </section>
     </inputs>
     <outputs>
-
+        <data name="output_gene_eqclasses" format="gz" label="${tool.name} on ${on_string}: gene eqclasses">
+            <filter>sec_advanced_options.dump_eqclasses == 'true'</filter>
+        </data>
+        <data name="output_mat_mtx" format="mtx" label="${tool.name} on ${on_string}: quants matrix"/>
+        <data name="output_mat_rows" format="txt" label="${tool.name} on ${on_string}: quants matrix rows"/>
+        <data name="output_mat_cols" format="txt" label="${tool.name} on ${on_string}: quants matrix columns"/>
+        <data name="output_feature_dump" format="txt" label="${tool.name} on ${on_string}: feature dump"/>
     </outputs>
     <tests>
-
+        
     </tests>
     <help>
         help
