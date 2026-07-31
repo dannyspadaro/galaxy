@@ -5,40 +5,44 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
-    mkdir input_rad &&
-    ln -s '$input_collated_rad' input_rad/map.collated.rad &&
+    ## cp -r '$input_collated_rad_dir.extra_files_path/$input_collated_rad_dir.metadata.store_root/collated_permit_list' collated_permit_list &&
+    ln -s '$input_collated_rad_dir.extra_files_path/$input_collated_rad_dir.metadata.store_root/collated_permit_list' collated_permit_list &&
     ln -s '$input_transcript_to_gene_map' t2g.tsv &&
     mkdir output &&
     #if $sec_advanced_options.quant_subset:
         ln -s '$sec_advanced_options.quant_subset' quant_subset.tsv &&
     #end if
     
-    alevin-fry quant --input-dir input_rad --tg-map $input_transcript_to_gene_map t2g.tsv --output-dir output
-    #if $resolution.resolution_selection == 'cr_like':
+    alevin-fry quant --input-dir collated_permit_list --tg-map t2g.tsv --output-dir output
+    #if $resolution_selection == 'cr_like':
         --resolution cr-like
-    #else if $resolution.resolution_selection == 'cr-like-em':
+    #else if $resolution_selection == 'cr_like_em':
         --resolution cr-like-em
-    #else if $resolution.resolution_selection == 'parsimony-em':
+    #else if $resolution_selection == 'parsimony_em':
         --resolution parsimony-em
-    #else if $resolution.resolution_selection == 'parsimony':
+    #else if $resolution_selection == 'parsimony':
         --resolution parsimony
-    #else if $resolution.resolution_selection == 'parsimony_gene':
+    #else if $resolution_selection == 'parsimony_gene':
         --resolution parsimony-gene
-    #else if $resolution.resolution_selection == 'parsimony-gene-em':
+    #else if $resolution_selection == 'parsimony_gene_em':
         --resolution parsimony-gene-em
-    #else if $resolution.resolution_selection == 'trivial':
+    #else if $resolution_selection == 'trivial':
         --resolution trivial
     #end if
 
-    #if $sec_advanced_options.dump_eqclasses == 'true':
-        --dump-dump_eqclasses
+    #if $sec_advanced_options.dump_eqclasses:
+        --dump-eqclasses
     #end if
 
-    #if not $sec_advanced_options.num_bootstraps == '0':
+    #if int($sec_advanced_options.num_bootstraps) > 0:
         --num-bootstraps '$sec_advanced_options.num_bootstraps'
-        #if $sec_advanced_options.summary_stat == 'true':
+        #if $sec_advanced_options.summary_stat:
             --summary-stat
         #end if
+    #end if
+
+    #if $sec_advanced_options.init_uniform:
+        --init-uniform
     #end if
 
     #if $sec_advanced_options.quant_subset:
@@ -53,8 +57,9 @@
         --multi-sample-output both
     #end if
     &&
-    #if $sec_advanced_options.dump_eqclasses == 'true':
+    #if $sec_advanced_options.dump_eqclasses:
         mv output/alevin/gene_eqclass.txt.gz $output_gene_eqclasses &&
+        mv output/alevin/geqc_counts.mtx $output_geqc_counts &&
     #end if
     mv output/alevin/quants_mat.mtx $output_mat_mtx &&
     mv output/alevin/quants_mat_rows.txt $output_mat_rows &&
@@ -62,7 +67,7 @@
     mv output/featureDump.txt $output_feature_dump
     ]]></command>
     <inputs>
-        <param name="input_collated_rad" type="data" format="rad" label="Collated RAD file"/>
+        <param name="input_collated_rad_dir" type="data" format="directory" label="Directory containing the collated RAD file"/>
         <param name="input_transcript_to_gene_map" type="data" format="tsv" label="Transcript to gene map"/>
         <param name="resolution_selection" type="select" label="Resolution">
             <option value="cr_like">cr-like</option>
@@ -91,13 +96,57 @@
         <data name="output_gene_eqclasses" format="gz" label="${tool.name} on ${on_string}: gene eqclasses">
             <filter>sec_advanced_options.dump_eqclasses == 'true'</filter>
         </data>
+        <data name="output_geqc_counts" format="mtx" label="${tool.name} on ${on_string}: geqc counts">
+            <filter>sec_advanced_options.dump_eqclasses == 'true'</filter>
+        </data>
         <data name="output_mat_mtx" format="mtx" label="${tool.name} on ${on_string}: quants matrix"/>
         <data name="output_mat_rows" format="txt" label="${tool.name} on ${on_string}: quants matrix rows"/>
         <data name="output_mat_cols" format="txt" label="${tool.name} on ${on_string}: quants matrix columns"/>
         <data name="output_feature_dump" format="txt" label="${tool.name} on ${on_string}: feature dump"/>
     </outputs>
     <tests>
-        
+    <test expect_num_outputs="6">
+        <param name="input_collated_rad_dir" value="collated_permit_list"/>
+        <param name="input_transcript_to_gene_map" value="t2g.tsv"/>
+        <param name="resolution_selection" value="cr_like"/>
+        <section name="sec_advanced_options">
+            <param name="dump_eqclasses" value="true"/>
+            <param name="num_bootstraps" value="0"/>
+            <param name="init_uniform" value="false"/>
+            <param name="summary_stat" value="false"/>
+            <param name="multi_sample_output" value="separate"/>
+        </section>
+        <output name="output_gene_eqclasses">
+            <assert_contents>
+                <has_size value="25" delta="0"/>
+            </assert_contents>
+        </output>
+        <output name="output_geqc_counts">
+            <assert_contents>
+                <has_size value="73" delta="0"/>
+            </assert_contents>
+        </output>
+        <output name="output_mat_mtx">
+            <assert_contents>
+                <has_size value="15638" delta="0"/>
+            </assert_contents>
+        </output>
+        <output name="output_mat_rows">
+            <assert_contents>
+                <has_size value="34306" delta="0"/>
+            </assert_contents>
+        </output>
+        <output name="output_mat_cols">
+            <assert_contents>
+                <has_size value="77" delta="0"/>
+            </assert_contents>
+        </output>
+        <output name="output_feature_dump">
+            <assert_contents>
+                <has_size value="74492" delta="0"/>
+            </assert_contents>
+        </output>
+    </test>
     </tests>
     <help>
         help

@@ -5,57 +5,47 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
-        cp -r '$input_permit_list.extra_files_path/$input_permit_list.metadata.store_root/permit_list' input_permit_list &&
+        cp -r '$input_permit_list.extra_files_path/$input_permit_list.metadata.store_root/permit_list' permit_list &&
         mkdir input_rad &&
         ln -s '$input_rad' input_rad/map.rad &&
-        alevin-fry collate --input-dir input_permit_list --rad-dir input_rad
+        alevin-fry collate --input-dir permit_list --rad-dir input_rad
         #if $collation_mode == 'two_round':
             --collation-mode two-round
         #else if $collation_mode == 'fast':
             --collation-mode fast
         #end if
         &&
-        mv input_permit_list/map.collated.rad $output_rad &&
-        mv input_permit_list/collate.json $output_json &&
-        mv input_permit_list/unmapped_bc_count_collated.bin $output_bin
+        mkdir -p '$output_collated_dir.extra_files_path/collated_permit_list' &&
+        mv permit_list/* '$output_collated_dir.extra_files_path/collated_permit_list' &&
+        touch '$output_collated_dir'
     ]]></command>
     <inputs>
-        <param type="data" name="input_permit_list" label="Output of 'Alevin-Fry Generate Permit List'" format="directory"/>
-        <param type="data" name="input_rad" label="RAD file to be collated" format="rad"/>
+        <param name="input_permit_list" type="data" format="directory" label="Output of 'Alevin-Fry Generate Permit List'"/>
+        <param name="input_rad" type="data" format="rad" label="RAD file to be collated"/>
         <param name="collation_mode" type="select" label="Collation mode for multi-barcode data">
             <option value="two_round" selected="true">two-round (generalizable)</option>
             <option value="fast">fast (single-pass for 2-level)</option>
         </param>
     </inputs>
     <outputs>
-        <data name="output_rad" label="${tool.name} on ${on_string}: '$input_rad'.collated" format="rad"/>
-        <data name="output_json" label="${tool.name} on ${on_string}: collate" format="json"/>
-        <!-- not sure if bin output is always given -->
-        <data name="output_bin" label="${tool.name} on ${on_string}: bin" format="bin"/>
+        <data name="output_collated_dir" format="directory" label="${tool.name} on ${on_string}: collated permit list"/>
     </outputs>
     <tests>
-    <test expect_num_outputs="3">
+    <test expect_num_outputs="1">
         <param name="input_permit_list" value="permit_list"/>
         <param name="input_rad" value="input_rad/map.rad"/>
         <param name="collation_mode" value="two_round"/>
-        <output name="output_rad">
-            <assert_contents>
-                <has_size value="108445" delta="0"/>
-            </assert_contents>
-        </output>
-        <output name="output_json">
-            <assert_contents>
-                <has_size value="127" delta="100"/>
-            </assert_contents>
-        </output>
-        <output name="output_bin">
-            <assert_contents>
-                <has_size value="3" delta="0"/>
-            </assert_contents>
+        <output name="output_collated_dir">
+            <extra_files type="directory" value="collated_permit_list/all_freq.bin"/>
+            <extra_files type="directory" value="collated_permit_list/collate.json"/>
+            <extra_files type="directory" value="collated_permit_list/generate_permit_list.json"/>
+            <extra_files type="directory" value="collated_permit_list/map.collated.rad"/>
+            <extra_files type="directory" value="collated_permit_list/permit_freq.bin"/>
+            <extra_files type="directory" value="collated_permit_list/permit_map.bin"/>
+            <extra_files type="directory" value="collated_permit_list/unmapped_bc_count_collated.bin"/>
         </output>
     </test>
     </tests>
-    help
     <help>
         help
     </help>
