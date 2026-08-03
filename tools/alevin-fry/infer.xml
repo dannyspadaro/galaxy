@@ -1,0 +1,48 @@
+<tool id="alevin_fry_infer" name="Alevin-Fry Infer" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
+    <description>on equivalence class count data</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
+    <command detect_errors="exit_code"><![CDATA[
+        ln -s '$input_eq_classes_dir.extra_files_path/$input_eq_classes_dir.metadata.store_root/eq_classes' eq_classes &&
+        #if $input_quant_subset:
+            ln -s '$input_quant_subset' quant_subset.txt &&
+        #end if
+        mkdir output &&
+        alevin-fry infer --count-mat eq_classes/geqc_counts.mtx --eq-labels eq_classes/gene_eqclass.txt.gz --output-dir output
+        #if $input_quant_subset:
+            --quant-subset quant_subset.txt
+        #end if
+        #if $input_usa_mode:
+            --usa
+        #end if
+        &&
+        mkdir -p '$output_dir.extra_files_path/infer_results' &&
+        mv output/* '$output_dir.extra_files_path/infer_results' &&
+        touch '$output_dir'
+    ]]></command>
+    <inputs>
+        <param name="input_eq_classes_dir" type="data" format="directory" label="Directory containing the equivalence classes file" help="Output of Alevin-Fry quant when used with 'Write equivalence class counts file'"/>
+        <param name="input_quant_subset" type="data" format="txt" optional="true" label="List of barcodes to quantify" help="One barcode per line in the file. Barcodes not in this list will be ignored during inference and will not appear in the output quantification matrix. If this input is left empty, then all of the original barcodes will be quantified."/>
+        <param name="input_usa_mode" type="boolean" checked="false" label="USA mode" help="Whether the input equivalence classes were computed in USA mode"/>
+    </inputs>
+    <outputs>
+        <data name="output_dir" format="directory" label="${tool.name} on ${on_string}"/>
+    </outputs>
+    <tests>
+    <test expect_num_outputs="1">
+        <param name="input_eq_classes_dir" value="infer/eq_classes"/>
+        <param name="input_usa_mode" value="false"/>
+        <output name="output_dir">
+            <extra_files type="directory" value="infer_results/quants_mat.mtx"/>
+            <extra_files type="directory" value="infer_results/quants_mat_cols.txt"/>
+            <extra_files type="directory" value="infer_results/quants_mat_rows.txt"/>
+        </output>
+    </test>
+    </tests>
+    <help><![CDATA[
+        help
+    ]]></help>
+    <expand macro="citations"/>
+</tool>

@@ -14,11 +14,11 @@
         mv map.rad $output_rad
     ]]></command>
     <inputs>
-        <param type="data" name="input" label="BAM or SAM file" format="bam,sam"/>
+        <param name="input" type="data" format="bam,sam" label="BAM or SAM file"/>
         <param argument="--filter_best" type="boolean" checked="false" label="filter best" help="Keep only the highest scoring alignments for each read"/>
     </inputs>
     <outputs>
-        <data name="output_rad" label="${tool.name} on ${on_string}" format="rad"/>
+        <data name="output_rad" format="rad" label="${tool.name} on ${on_string}"/>
     </outputs>
     <tests>
         <test>
