@@ -16,8 +16,7 @@
         #end if
         &&
         mkdir -p '$output_collated_dir.extra_files_path/collated_permit_list' &&
-        mv permit_list/* '$output_collated_dir.extra_files_path/collated_permit_list' &&
-        touch '$output_collated_dir'
+        mv permit_list/* '$output_collated_dir.extra_files_path/collated_permit_list'
     ]]></command>
     <inputs>
         <param name="input_permit_list" type="data" format="directory" label="Output of 'Alevin-Fry Generate Permit List'"/>

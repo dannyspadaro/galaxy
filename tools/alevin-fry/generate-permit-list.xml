@@ -22,10 +22,8 @@
             --expect-cells $barcode.expect_ncells
         #end if
         &&
-        mv output/all_freq.bin $output_all_freq &&
-        mv output/permit_freq.bin $output_permit_freq &&
-        mv output/permit_map.bin $output_permit_map &&
-        mv output/generate_permit_list.json $output_json
+        mkdir -p '$output_dir.extra_files_path/permit_list' &&
+        mv output/* '$output_dir.extra_files_path/permit_list'
     ]]></command>
     <inputs>
         <param name="input_rad" type="data" format="rad" label="Input RAD file"/>
@@ -60,34 +58,22 @@
         </conditional>
     </inputs>
     <outputs>
-        <data name="output_all_freq" format="binary" label="${tool.name} on ${on_string}: all_freq"/>
-        <data name="output_permit_freq" format="binary" label="${tool.name} on ${on_string}: permit_freq"/>
-        <data name="output_permit_map" format="binary" label="${tool.name} on ${on_string}: permit_map"/>
-        <data name="output_json" format="json" label="${tool.name} on ${on_string}: generate_permit_list"/>
+        <data name="output_dir" format="directory" label="${tool.name} on ${on_string}"/>
     </outputs>
     <tests>
-    <test expect_num_outputs="4">
-        <param name="input_rad" value="input_rad"/>
-        <param name="expectedori" value="either"/>
-        <conditional name="barcode">
-            <param name="barcode_selection" value="knee-distance"/>
-        </conditional>
-        <output name="output_all_freq">
-            <assert_contents>
-                <has_size value="114792" delta="0"/>
-            </assert_contents>
-        </output>
-        <output name="output_permit_freq">
-            <assert_contents>
-                <has_size value="32312" delta="0"/>
-            </assert_contents>
-        </output>
-        <output name="output_permit_map">
-            <assert_contents>
-                <has_size value="3848936" delta="0"/>
-            </assert_contents>
-        </output>
-    </test>
+        <test expect_num_outputs="1">
+            <param name="input_rad" value="input_rad"/>
+            <param name="expectedori" value="either"/>
+            <conditional name="barcode">
+                <param name="barcode_selection" value="knee-distance"/>
+            </conditional>
+            <output name="output_dir">
+                <extra_files type="directory" file="permit_list/all_freq.bin"/>
+                <extra_files type="directory" value="permit_list/permit_freq.bin"/>
+                <extra_files type="directory" value="permit_list/permit_map.bin"/>
+                <extra_files type="directory" value="permit_list/generate_permit_list.json"/>
+            </output>
+        </test>
     </tests>
     <help>
         help

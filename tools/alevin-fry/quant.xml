@@ -5,7 +5,6 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
-    ## cp -r '$input_collated_rad_dir.extra_files_path/$input_collated_rad_dir.metadata.store_root/collated_permit_list' collated_permit_list &&
     ln -s '$input_collated_rad_dir.extra_files_path/$input_collated_rad_dir.metadata.store_root/collated_permit_list' collated_permit_list &&
     ln -s '$input_transcript_to_gene_map' t2g.tsv &&
     mkdir output &&
@@ -57,18 +56,22 @@
         --multi-sample-output both
     #end if
     &&
-    #if $sec_advanced_options.dump_eqclasses:
-        mv output/alevin/gene_eqclass.txt.gz $output_gene_eqclasses &&
-        mv output/alevin/geqc_counts.mtx $output_geqc_counts &&
+    #if $sec_advanced_options.feature_dump:
+        mv output/featureDump.txt $output_feature_dump &&
     #end if
-    mv output/alevin/quants_mat.mtx $output_mat_mtx &&
-    mv output/alevin/quants_mat_rows.txt $output_mat_rows &&
-    mv output/alevin/quants_mat_cols.txt $output_mat_cols &&
-    mv output/featureDump.txt $output_feature_dump
+    #if $sec_advanced_options.quant_json:
+        mv output/quant.json $output_quant_json &&
+    #end if
+    #if $sec_advanced_options.dump_eqclasses:
+        ## This changes the matrix header in geqc_counts.mtx to use 'integer' instead of 'real'. Otherwise alevin-fry infer runs into an error. This is a known issue and is still present in version 0.16.2. See https://github.com/COMBINE-lab/alevin-fry/issues/150
+        sed -i '1s/real/integer/' output/alevin/geqc_counts.mtx &&
+    #end if
+    mkdir -p '$output_dir.extra_files_path/quant_output' &&
+    mv output/alevin/* '$output_dir.extra_files_path/quant_output'
     ]]></command>
     <inputs>
         <param name="input_collated_rad_dir" type="data" format="directory" label="Directory containing the collated RAD file"/>
-        <param name="input_transcript_to_gene_map" type="data" format="tsv" label="Transcript to gene map"/>
+        <param name="input_transcript_to_gene_map" type="data" format="tsv,tabular" label="Transcript to gene map"/>
         <param name="resolution_selection" type="select" label="Resolution">
             <option value="cr_like">cr-like</option>
             <option value="cr_like_em">cr-like-em</option>
@@ -84,28 +87,46 @@
             <param name="num_bootstraps" type="integer" min="0" value="0" label="Number of bootstraps to use" help="Writes bootstrap inferential replicate information to the outputs. This flag is only meaningful with the resolution modes cr-like-em and parsimony-em."/>
             <param name="init_uniform" type="boolean" checked="false" label="Uniform sampling"/>
             <param name="summary_stat" type="boolean" checked="false" label="Store only summary statistics (of bootstrap)" help="Only applicable when bootstrap is used. Writes the summary statistics of the bootstrap replicates (i.e. the mean and variance of the inferential replicates)."/>
-            <param name="quant_subset" type="data" format="tsv" optional="true" label="List of barcodes to quantify" help="Barcodes not in this list will be ignored during inference and will not appear in the output quantification matrix."/>
+            <param name="quant_subset" type="data" format="tsv,tabular" optional="true" label="List of barcodes to quantify" help="Barcodes not in this list will be ignored during inference and will not appear in the output quantification matrix."/>
             <param name="multi_sample_output" type="select" label="Multi-sample output mode" help="Output mode for multi-sample data. Either per-sample matrices, one combined matrix, or both. Default value: separate.">
                 <option value="separate">separate</option>
                 <option value="combined">combined</option>
                 <option value="both">both</option>
             </param>
+            <param name="feature_dump" type="boolean" checked="false" label="Output featureDump.txt file"/>
+            <param name="quant_json" type="boolean" checked="false" label="Output quant.json file"/>
         </section>
     </inputs>
     <outputs>
-        <data name="output_gene_eqclasses" format="gz" label="${tool.name} on ${on_string}: gene eqclasses">
-            <filter>sec_advanced_options.dump_eqclasses == 'true'</filter>
+        <data name="output_dir" format="directory" label="${tool.name} on ${on_string}"/>
+        <data name="output_feature_dump" format="txt" label="${tool.name} on ${on_string}: feature dump">
+            <filter>sec_advanced_options['feature_dump']</filter>
         </data>
-        <data name="output_geqc_counts" format="mtx" label="${tool.name} on ${on_string}: geqc counts">
-            <filter>sec_advanced_options.dump_eqclasses == 'true'</filter>
+        <data name="output_quant_json" format="json" label="${tool.name} on ${on_string}: quant.json">
+            <filter>sec_advanced_options['quant_json']</filter>
         </data>
-        <data name="output_mat_mtx" format="mtx" label="${tool.name} on ${on_string}: quants matrix"/>
-        <data name="output_mat_rows" format="txt" label="${tool.name} on ${on_string}: quants matrix rows"/>
-        <data name="output_mat_cols" format="txt" label="${tool.name} on ${on_string}: quants matrix columns"/>
-        <data name="output_feature_dump" format="txt" label="${tool.name} on ${on_string}: feature dump"/>
     </outputs>
     <tests>
-    <test expect_num_outputs="6">
+    <test expect_num_outputs="1">
+        <param name="input_collated_rad_dir" value="collated_permit_list"/>
+        <param name="input_transcript_to_gene_map" value="t2g.tsv"/>
+        <param name="resolution_selection" value="cr_like"/>
+        <section name="sec_advanced_options">
+            <param name="dump_eqclasses" value="false"/>
+            <param name="num_bootstraps" value="0"/>
+            <param name="init_uniform" value="false"/>
+            <param name="summary_stat" value="false"/>
+            <param name="multi_sample_output" value="separate"/>
+            <param name="feature_dump" value="false"/>
+            <param name="quant_json" value="false"/>
+        </section>
+        <output name="output_dir">
+            <extra_files type="directory" file="quant_output/quants_mat.mtx"/>
+            <extra_files type="directory" value="quant_output/quants_mat_cols.txt"/>
+            <extra_files type="directory" value="quant_output/quants_mat_rows.txt"/>
+        </output>
+    </test>
+    <test expect_num_outputs="3">
         <param name="input_collated_rad_dir" value="collated_permit_list"/>
         <param name="input_transcript_to_gene_map" value="t2g.tsv"/>
         <param name="resolution_selection" value="cr_like"/>
@@ -115,35 +136,24 @@
             <param name="init_uniform" value="false"/>
             <param name="summary_stat" value="false"/>
             <param name="multi_sample_output" value="separate"/>
+            <param name="feature_dump" value="true"/>
+            <param name="quant_json" value="true"/>
         </section>
-        <output name="output_gene_eqclasses">
-            <assert_contents>
-                <has_size value="25" delta="0"/>
-            </assert_contents>
-        </output>
-        <output name="output_geqc_counts">
-            <assert_contents>
-                <has_size value="73" delta="0"/>
-            </assert_contents>
-        </output>
-        <output name="output_mat_mtx">
-            <assert_contents>
-                <has_size value="15638" delta="0"/>
-            </assert_contents>
-        </output>
-        <output name="output_mat_rows">
-            <assert_contents>
-                <has_size value="34306" delta="0"/>
-            </assert_contents>
-        </output>
-        <output name="output_mat_cols">
-            <assert_contents>
-                <has_size value="77" delta="0"/>
-            </assert_contents>
+        <output name="output_dir">
+            <extra_files type="directory" value="quant_output/quants_mat.mtx"/>
+            <extra_files type="directory" value="quant_output/quants_mat_cols.txt"/>
+            <extra_files type="directory" value="quant_output/quants_mat_rows.txt"/>
+            <extra_files type="directory" value="quant_output/gene_eqclass.txt.gz"/>
+            <extra_files type="directory" value="quant_output/geqc_counts.mtx"/>
         </output>
         <output name="output_feature_dump">
             <assert_contents>
                 <has_size value="74492" delta="0"/>
+            </assert_contents>
+        </output>
+        <output name="output_quant_json">
+            <assert_contents>
+                <has_size value="4457" delta="200"/>
             </assert_contents>
         </output>
     </test>
