@@ -1,14 +1,14 @@
-<tool id="alevin_fry_generate_permit_list" name="alevin-fry generate permit list" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
-    <description>of barcodes from a RAD file</description>
+<tool id="alevin_fry_generate_collate_permit_list" name="alevin-fry generate permit list and collate" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
+    <description>a RAD file</description>
     <macros>
         <import>macros.xml</import>
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
-        mkdir input &&
-        ln -s '$input_rad' input/map.rad &&
-        mkdir output &&
-        alevin-fry generate-permit-list --input input --expected-ori $expectedori --output-dir output
+        mkdir input_rad &&
+        ln -s '$input_rad' input_rad/map.rad &&
+        mkdir permit_list &&
+        alevin-fry generate-permit-list --input input_rad --expected-ori $expectedori --output-dir permit_list
         #if $barcode.barcode_selection == 'knee-distance':
             --knee-distance
         #else if $barcode.barcode_selection == 'force-cells':
@@ -22,8 +22,15 @@
             --expect-cells $barcode.expect_ncells
         #end if
         &&
-        mkdir -p '$output_dir.extra_files_path/permit_list' &&
-        mv output/* '$output_dir.extra_files_path/permit_list'
+        alevin-fry collate --input-dir permit_list --rad-dir input_rad
+        #if $collation_mode == 'two_round':
+            --collation-mode two-round
+        #else if $collation_mode == 'fast':
+            --collation-mode fast
+        #end if
+        &&
+        mkdir -p '$output_dir.extra_files_path/collated_permit_list' &&
+        mv permit_list/* '$output_dir.extra_files_path/collated_permit_list'
     ]]></command>
     <inputs>
         <param name="input_rad" type="data" format="rad" label="Input RAD file"/>
@@ -56,9 +63,13 @@
                 <param name="expect_ncells" type="integer" min="1" label="Expected number of cells" help="Value around which a robust cutoff will be chosen."/>
             </when>
         </conditional>
+        <param name="collation_mode" type="select" label="Collation mode for multi-barcode data">
+            <option value="two_round" selected="true">two-round (generalizable)</option>
+            <option value="fast">fast (single-pass for 2-level)</option>
+        </param>
     </inputs>
     <outputs>
-        <data name="output_dir" format="directory" label="${tool.name} on ${on_string}"/>
+        <data name="output_dir" format="directory" label="${tool.name} on ${on_string}: collated permit list"/>
     </outputs>
     <tests>
         <test expect_num_outputs="1">
@@ -67,11 +78,15 @@
             <conditional name="barcode">
                 <param name="barcode_selection" value="knee-distance"/>
             </conditional>
+            <param name="collation_mode" value="two_round"/>
             <output name="output_dir">
-                <extra_files type="directory" file="permit_list/all_freq.bin"/>
-                <extra_files type="directory" value="permit_list/permit_freq.bin"/>
-                <extra_files type="directory" value="permit_list/permit_map.bin"/>
-                <extra_files type="directory" value="permit_list/generate_permit_list.json"/>
+                <extra_files type="directory" value="collated_permit_list/all_freq.bin"/>
+                <extra_files type="directory" value="collated_permit_list/collate.json"/>
+                <extra_files type="directory" value="collated_permit_list/generate_permit_list.json"/>
+                <extra_files type="directory" value="collated_permit_list/map.collated.rad"/>
+                <extra_files type="directory" value="collated_permit_list/permit_freq.bin"/>
+                <extra_files type="directory" value="collated_permit_list/permit_map.bin"/>
+                <extra_files type="directory" value="collated_permit_list/unmapped_bc_count_collated.bin"/>
             </output>
         </test>
     </tests>

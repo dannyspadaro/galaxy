@@ -1,4 +1,4 @@
-<tool id="alevin_fry_convert" name="Alevin-Fry Convert" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
+<tool id="alevin_fry_convert" name="alevin-fry convert" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
     <description>BAM/SAM to RAD</description>
     <macros>
         <import>macros.xml</import>

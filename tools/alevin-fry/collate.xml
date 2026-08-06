@@ -1,4 +1,4 @@
-<tool id="alevin_fry_collate" name="Alevin-Fry Collate" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
+<tool id="alevin_fry_collate" name="alevin-fry collate" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
     <description>a RAD file by corrected cell barcode</description>
     <macros>
         <import>macros.xml</import>

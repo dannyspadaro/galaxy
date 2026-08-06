@@ -1,5 +1,5 @@
-<tool id="alevin_fry_quant" name="Alevin-Fry quant" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
-    <description>Quantify expression from a collated RAD file</description>
+<tool id="alevin_fry_quant" name="alevin-fry quant" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
+    <description>quantify expression from a collated RAD file</description>
     <macros>
         <import>macros.xml</import>
     </macros>

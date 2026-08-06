@@ -4,6 +4,7 @@
     <tool file="alevin-fry/collate.xml"/>
     <tool file="alevin-fry/convert.xml"/>
     <tool file="alevin-fry/generate-permit-list.xml"/>
+    <tool file="alevin-fry/generate-collate-permit-list.xml"/>
     <tool file="alevin-fry/infer.xml"/>
     <tool file="alevin-fry/quant.xml"/>
   </section>

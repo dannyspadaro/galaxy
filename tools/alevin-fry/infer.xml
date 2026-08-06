@@ -1,4 +1,4 @@
-<tool id="alevin_fry_infer" name="Alevin-Fry Infer" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
+<tool id="alevin_fry_infer" name="alevin-fry infer" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5" profile="@PROFILE_VERSION@">
     <description>on equivalence class count data</description>
     <macros>
         <import>macros.xml</import>
@@ -22,8 +22,8 @@
         mv output/* '$output_dir.extra_files_path/infer_output'
     ]]></command>
     <inputs>
-        <param name="input_quant_dir" type="data" format="directory" label="Directory containing the equivalence classes file" help="Output of Alevin-Fry quant when used with 'Write equivalence class counts file'."/>
-        <param name="input_quant_subset" type="data" format="txt" optional="true" label="List of barcodes to quantify" help="One barcode per line in the file. Barcodes not in this list will be ignored during inference and will not appear in the output quantification matrix. If this input is left empty, then all of the original barcodes will be quantified."/>
+        <param name="input_quant_dir" type="data" format="directory" label="Output directory of 'Alevin-Fry quant'" help="Output of the Alevin-Fry quant tool when used with 'Write equivalence class counts file'."/>
+        <param name="input_quant_subset" type="data" format="txt,tabular" optional="true" label="List of barcodes to quantify" help="One barcode per line in the file. Barcodes not in this list will be ignored during inference and will not appear in the output quantification matrix. If this input is left empty, then all of the original barcodes will be quantified."/>
         <param name="input_usa_mode" type="boolean" checked="false" label="USA mode" help="Whether the input equivalence classes were computed in USA mode."/>
     </inputs>
     <outputs>
