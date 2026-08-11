@@ -5,17 +5,20 @@
     </macros>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
-        ln -s '$input' input.bam &&
-        alevin-fry convert --bam input.bam --output map.rad
-        #if $filter_best:
-            --filter_best
+        #if $input.ext == 'bam':
+            ln -s '$input' input.bam &&
+            alevin-fry convert --bam input.bam
+        #else if $input.ext == 'sam':
+            ln -s '$input' input.sam &&
+            alevin-fry convert --bam input.sam
         #end if
+        $filter_best --output map.rad
         &&
         mv map.rad $output_rad
     ]]></command>
     <inputs>
         <param name="input" type="data" format="bam,sam" label="BAM or SAM file"/>
-        <param argument="--filter_best" type="boolean" checked="false" label="filter best" help="Keep only the highest scoring alignments for each read"/>
+        <param argument="--filter_best" type="boolean" truevalue="--filter_best" falsevalue="" checked="false" label="Filter best alignments" help="Keep only the highest scoring alignments for each read."/>
     </inputs>
     <outputs>
         <data name="output_rad" format="rad" label="${tool.name} on ${on_string}"/>
@@ -23,11 +26,18 @@
     <tests>
         <test>
             <param name="input" value="convert/input.bam"/>
-            <output name="output_rad">
-                <assert_contents>
-                    <has_size value="516" delta="0"/>
-                </assert_contents>
-            </output>
+            <param name="filter_best" value="false"/>
+            <output name="output_rad" file="convert/bam_output.rad"/>
+        </test>
+        <test>
+            <param name="input" value="convert/input.bam"/>
+            <param name="filter_best" value="true"/>
+            <output name="output_rad" file="convert/bam_filter.rad"/>
+        </test>
+        <test>
+            <param name="input" value="convert/input.sam"/>
+            <param name="filter_best" value="false"/>
+            <output name="output_rad" file="convert/sam_output.rad"/>
         </test>
     </tests>
     <help><![CDATA[
