@@ -14,7 +14,7 @@
         #end if
         $filter_best --output map.rad
         &&
-        mv map.rad $output_rad
+        mv map.rad '$output_rad'
     ]]></command>
     <inputs>
         <param name="input" type="data" format="bam,sam" label="BAM or SAM file"/>

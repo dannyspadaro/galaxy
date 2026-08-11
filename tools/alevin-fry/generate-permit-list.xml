@@ -8,15 +8,15 @@
         mkdir input &&
         ln -s '$input_rad' input/map.rad &&
         mkdir output &&
-        alevin-fry generate-permit-list --input input --expected-ori $expectedori --output-dir output
+        alevin-fry generate-permit-list --input input --expected-ori '$expected_ori' --output-dir output
         #if $barcode.barcode_selection == 'knee-distance':
             --knee-distance
         #else if $barcode.barcode_selection == 'force-cells':
             --force-cells $barcode.force_ncells
         #else if $barcode.barcode_selection == 'valid-bc':
-            --valid-bc $barcode.bcfile
+            --valid-bc '$barcode.bcfile'
         #else if $barcode.barcode_selection == 'unfiltered-pl':
-            --unfiltered-pl $barcode.plist
+            --unfiltered-pl '$barcode.plist'
             --min-reads $barcode.min_reads
         #else if $barcode.barcode_selection == 'expect-cells':
             --expect-cells $barcode.expect_ncells
@@ -27,7 +27,7 @@
     ]]></command>
     <inputs>
         <param name="input_rad" type="data" format="rad" label="Input RAD file"/>
-        <param name="expectedori" type="select" label="Expected orientation">
+        <param argument="--expected-ori" type="select" label="Expected orientation">
             <option value="fw">fw (forward)</option>
             <option value="rc">rc (reverse complement)</option>
             <option value="both">both</option>
@@ -43,17 +43,17 @@
             </param>
             <when value="knee-distance"/>
             <when value="force-cells">
-                <param name="force_ncells" type="integer" min="1" label="Number of barcodes to keep" help="This amount of the most frequent barcodes will be considered part of the permit list."/>
+                <param name="force_ncells" argument="--force-cells" type="integer" min="1" label="Number of barcodes to keep" help="This amount of the most frequent barcodes will be considered part of the permit list."/>
             </when>
             <when value="valid-bc">
-                <param name="bcfile" type="data" format="txt,tabular" label="List of true, filtered barcodes" help="Barcodes in this list will be considered to correspond to true and filtered cells for this sample."/>
+                <param name="bcfile" argument="--valid-bc" type="data" format="txt,tabular" label="List of true, filtered barcodes" help="Barcodes in this list will be considered to correspond to true and filtered cells for this sample."/>
             </when>
             <when value="unfiltered-pl">
-                <param name="plist" type="data" format="txt,tabular" label="Unfiltered barcode permit list" help="List of possible barcodes for the sample, e.g. an external permit list like the 10x v2 or the 10x v3."/>
-                <param name="min_reads" type="integer" min="1" value="10" label="min reads" help="Only barcodes that are present at least this often are retained and considered as present cells."/>
+                <param name="plist" argument="--unfiltered-pl" type="data" format="txt,tabular" label="Unfiltered barcode permit list" help="List of possible barcodes for the sample, e.g. an external permit list like the 10x v2 or the 10x v3."/>
+                <param argument="--min-reads" type="integer" min="1" value="10" label="Minimum reads" help="Only barcodes occuring at least this many times are retained and considered as present cells."/>
             </when>
             <when value="expect-cells">
-                <param name="expect_ncells" type="integer" min="1" label="Expected number of cells" help="Value around which a robust cutoff will be chosen."/>
+                <param name="expect_ncells" argument="--expect-cells" type="integer" min="1" label="Expected number of cells" help="Value around which a robust cutoff will be chosen."/>
             </when>
         </conditional>
     </inputs>
@@ -63,7 +63,7 @@
     <tests>
         <test expect_num_outputs="1">
             <param name="input_rad" value="input_rad"/>
-            <param name="expectedori" value="either"/>
+            <param name="expected_ori" value="either"/>
             <conditional name="barcode">
                 <param name="barcode_selection" value="knee-distance"/>
             </conditional>

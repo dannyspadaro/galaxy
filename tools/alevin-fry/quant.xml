@@ -12,7 +12,7 @@
         ln -s '$sec_advanced_options.quant_subset' quant_subset.tsv &&
     #end if
     
-    alevin-fry quant --input-dir collated_permit_list --tg-map t2g.tsv --output-dir output
+    alevin-fry quant --input-dir collated_permit_list --tg-map t2g.tsv --output-dir output $sec_advanced_options.dump_eqclasses $sec_advanced_options.init_uniform
     #if $resolution_selection == 'cr_like':
         --resolution cr-like
     #else if $resolution_selection == 'cr_like_em':
@@ -29,19 +29,9 @@
         --resolution trivial
     #end if
 
-    #if $sec_advanced_options.dump_eqclasses:
-        --dump-eqclasses
-    #end if
-
     #if int($sec_advanced_options.num_bootstraps) > 0:
         --num-bootstraps '$sec_advanced_options.num_bootstraps'
-        #if $sec_advanced_options.summary_stat:
-            --summary-stat
-        #end if
-    #end if
-
-    #if $sec_advanced_options.init_uniform:
-        --init-uniform
+        $sec_advanced_options.summary_stat
     #end if
 
     #if $sec_advanced_options.quant_subset:
@@ -71,8 +61,8 @@
     ]]></command>
     <inputs>
         <param name="input_collated_rad_dir" type="data" format="directory" label="Directory containing the collated RAD file"/>
-        <param name="input_transcript_to_gene_map" type="data" format="tsv,tabular" label="Transcript to gene map"/>
-        <param name="resolution_selection" type="select" label="Resolution">
+        <param name="input_transcript_to_gene_map" type="data" format="tsv,tabular" label="Transcript-to-gene map" help="Headerless tab-separated transcript-to-gene map. Use two columns (target, gene) for standard quantification or three columns (target, gene, S/U) for USA-mode quantification."/>
+        <param name="resolution_selection" argument="--resolution" type="select" label="Resolution">
             <option value="cr_like">cr-like</option>
             <option value="cr_like_em">cr-like-em</option>
             <option value="parsimony_em">parsimony-em</option>
@@ -82,13 +72,13 @@
             <option value="trivial">trivial</option>
         </param>
         <section name="sec_advanced_options" title="Advanced options" expanded="false">
-            <param name="dump_eqclasses" type="boolean" checked="false" label="Write equivalence class counts file" help="Writes a gene-level, UMI-deduplicated equivalence class counts file. This can be used for subsequent analyses where gene-ambiguous reads have been neither resovled nor discarded."/>
+            <param name="dump_eqclasses" type="boolean" truevalue="--dump-eqclasses" falsevalue="" checked="false" label="Write equivalence class counts" help="Writes a gene-level, UMI-deduplicated equivalence class counts file. This can be used for subsequent analyses where gene-ambiguous reads have been neither resolved nor discarded."/>
             <!-- did not restrict num_bootstraps to only be usable with cr_like_em and parsimony_em, because the alevin-fry documentation is based on version 0.11.0, so this information could be outdated. Thus num_bootstraps is unrestricted for the case that it may have more functionality in recent versions.  -->
             <param name="num_bootstraps" type="integer" min="0" value="0" label="Number of bootstraps to use" help="Writes bootstrap inferential replicate information to the outputs. This flag is only meaningful with the resolution modes cr-like-em and parsimony-em."/>
-            <param name="init_uniform" type="boolean" checked="false" label="Uniform sampling"/>
-            <param name="summary_stat" type="boolean" checked="false" label="Store only summary statistics (of bootstrap)" help="Only applicable when bootstrap is used. Writes the summary statistics of the bootstrap replicates (i.e. the mean and variance of the inferential replicates)."/>
-            <param name="quant_subset" type="data" format="tsv,tabular" optional="true" label="List of barcodes to quantify" help="Barcodes not in this list will be ignored during inference and will not appear in the output quantification matrix."/>
-            <param name="multi_sample_output" type="select" label="Multi-sample output mode" help="Output mode for multi-sample data. Either per-sample matrices, one combined matrix, or both. Default value: separate.">
+            <param name="init_uniform" type="boolean" truevalue="--init-uniform" falsevalue="" checked="false" label="Uniform sampling"/>
+            <param name="summary_stat" type="boolean" truevalue="--summary-stat" falsevalue="" checked="false" label="Store only bootstrap summary statistics" help="Only applicable when bootstrap is used. Writes the summary statistics of the bootstrap replicates (i.e. the mean and variance of the inferential replicates)."/>
+            <param name="quant_subset" type="data" format="tsv,tabular" optional="true" label="List of barcodes to quantify" help="One barcode per line. Barcodes not in this list will be ignored during inference and will not appear in the output quantification matrix."/>
+            <param argument="--multi-sample-output" type="select" label="Multi-sample output mode" help="Output mode for multi-sample data. Either per-sample matrices, one combined matrix, or both. Default value: separate.">
                 <option value="separate">separate</option>
                 <option value="combined">combined</option>
                 <option value="both">both</option>
@@ -121,7 +111,7 @@
             <param name="quant_json" value="false"/>
         </section>
         <output name="output_dir">
-            <extra_files type="directory" file="quant_output/quants_mat.mtx"/>
+            <extra_files type="directory" value="quant_output/quants_mat.mtx"/>
             <extra_files type="directory" value="quant_output/quants_mat_cols.txt"/>
             <extra_files type="directory" value="quant_output/quants_mat_rows.txt"/>
         </output>
