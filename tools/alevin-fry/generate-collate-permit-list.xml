@@ -87,8 +87,8 @@
         <section name="sec_advanced_options" title="Advanced options" expanded="false">
             <conditional name="multi_barcode_mode" label="Multi-barcode mode">
                 <param name="multi_barcode_mode_select" type="select" label="Use multi-barcode mode">
-                    <option value="yes">yes</option>
                     <option value="no">no</option>
+                    <option value="yes">yes</option>
                 </param>
                 <when value="yes">
                     <param argument="--sample-bc-list" type="data" format="txt,tabular" label="Sample barcode list" help="File containing known sample/library barcodes (one per line)."/>
