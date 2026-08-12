@@ -22,6 +22,22 @@
         #else if $barcode.barcode_selection == 'expect-cells':
             --expect-cells $barcode.expect_ncells
         #end if
+        #if $sec_advanced_options.multi_barcode_mode.multi_barcode_mode_select == 'yes':
+            --sample-bc-list $sec_advanced_options.sample_bc_list
+            #if $sec_advanced_options.multi_barcode_mode.sample_names:
+                --sample-names $sec_advanced_options.multi_barcode_mode.sample_names
+            #end if
+            #if $sec_advanced_options.multi_barcode_mode.sample_correction_mode == 'exact':
+                --sample-correction-mode exact
+            #else if $sec_advanced_options.multi_barcode_mode.sample_correction_mode == '1-edit':
+                --sample-correction-mode 1-edit
+            #end if
+            #if $sec_advanced_options.multi_barcode_mode.sample_bc_ori == 'forward':
+                --sample-bc-ori forward
+            #else if $sec_advanced_options.multi_barcode_mode.sample_bc_ori == 'reverse':
+                --sample-bc-ori reverse
+            #end if
+        #end if
         &&
         alevin-fry collate --input-dir permit_list --rad-dir input_rad
         #if $collation_mode == 'two_round':
@@ -68,6 +84,28 @@
             <option value="two_round" selected="true">two-round (generalizable)</option>
             <option value="fast">fast (single-pass for 2-level)</option>
         </param>
+        <section name="sec_advanced_options" title="Advanced options" expanded="false">
+            <conditional name="multi_barcode_mode" label="Multi-barcode mode">
+                <param name="multi_barcode_mode_select" type="select" label="Use multi-barcode mode">
+                    <option value="yes">yes</option>
+                    <option value="no">no</option>
+                </param>
+                <when value="yes">
+                    <param argument="--sample-bc-list" type="data" format="txt,tabular" label="Sample barcode list" help="File containing known sample/library barcodes (one per line)."/>
+                    <param argument="--sample-names" type="data" format="tsv,tabular" optional="true" label="Sample names" help="TSV file mapping sample barcodes to human-readable names. One line per barcode/name combination, with the barcode and name separated by a tab."/>
+                    <param argument="--sample-correction-mode" type="select" label="Sample correction mode" help="Correction mode for sample barcodes. Default value: exact.">
+                        <option value="exact">exact</option>
+                        <option value="1-edit">1-edit</option>
+                    </param>
+                    <param argument="--sample-bc-ori" type="select" label="Sample barcode orientation" help="Orientation of sample barcodes in the whitelist relative to the read. Default value: forward. Forward = whitelist matches read as-is. Reverse = reverse-complement the whitelist before lookup, e.g. 10x Flex v2.">
+                        <option value="forward">forward</option>
+                        <option value="reverse">reverse</option>
+                    </param>
+                </when>
+                <when value="no">
+                </when>
+            </conditional>
+        </section>
     </inputs>
     <outputs>
         <data name="output_dir" format="directory" label="${tool.name} on ${on_string}: collated permit list"/>
@@ -80,6 +118,11 @@
                 <param name="barcode_selection" value="knee-distance"/>
             </conditional>
             <param name="collation_mode" value="two_round"/>
+            <section name="sec_advanced_options">
+                <conditional name="multi_barcode_mode">
+                    <param name="multi_barcode_mode_select" value="no"/>
+                </conditional>
+            </section>
             <output name="output_dir">
                 <extra_files type="directory" value="collated_permit_list/all_freq.bin"/>
                 <extra_files type="directory" value="collated_permit_list/collate.json"/>
