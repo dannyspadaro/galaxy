@@ -4,11 +4,12 @@
         <import>macros.xml</import>
     </macros>
     <expand macro="requirements"/>
+    <expand macro="version_command"/>
     <command detect_errors="exit_code"><![CDATA[
         mkdir input_rad &&
         ln -s '$input_rad' input_rad/map.rad &&
         mkdir permit_list &&
-        alevin-fry generate-permit-list --input input_rad --expected-ori $expected_ori --output-dir permit_list
+        alevin-fry generate-permit-list --input input_rad --expected-ori '$expected_ori' --output-dir permit_list
         #if $barcode.barcode_selection == 'knee-distance':
             --knee-distance
         #else if $barcode.barcode_selection == 'force-cells':
@@ -34,7 +35,7 @@
     ]]></command>
     <inputs>
         <param name="input_rad" type="data" format="rad" label="Input RAD file"/>
-        <param argument="--expected-ori" type="select" label="Expected orientation">
+        <param argument="--expected-ori" type="select" label="Expected orientation" help="Discards alignments that do not fit the expected orientation.">
             <option value="fw">fw (forward)</option>
             <option value="rc">rc (reverse complement)</option>
             <option value="both">both</option>
@@ -63,7 +64,7 @@
                 <param name="expect_ncells" argument="--expect-cells" type="integer" min="1" label="Expected number of cells" help="Value around which a robust cutoff will be chosen."/>
             </when>
         </conditional>
-        <param name="collation_mode" type="select" label="Collation mode for multi-barcode data">
+        <param argument="--collation-mode" type="select" label="Collation mode for multi-barcode data">
             <option value="two_round" selected="true">two-round (generalizable)</option>
             <option value="fast">fast (single-pass for 2-level)</option>
         </param>

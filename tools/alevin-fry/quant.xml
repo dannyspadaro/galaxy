@@ -4,6 +4,7 @@
         <import>macros.xml</import>
     </macros>
     <expand macro="requirements"/>
+    <expand macro="version_command"/>
     <command detect_errors="exit_code"><![CDATA[
     ln -s '$input_collated_rad_dir.extra_files_path/$input_collated_rad_dir.metadata.store_root/collated_permit_list' collated_permit_list &&
     ln -s '$input_transcript_to_gene_map' t2g.tsv &&

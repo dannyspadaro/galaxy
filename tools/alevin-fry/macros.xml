@@ -7,6 +7,9 @@
             <requirement type="package" version="@TOOL_VERSION@">alevin-fry</requirement>
         </requirements>
     </xml>
+    <xml name="version_command">
+        <version_command>alevin-fry --version</version_command>
+    </xml>
     <xml name="citations">
         <citations>
             <citation type="bibtex">

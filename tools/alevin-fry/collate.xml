@@ -4,6 +4,7 @@
         <import>macros.xml</import>
     </macros>
     <expand macro="requirements"/>
+    <expand macro="version_command"/>
     <command detect_errors="exit_code"><![CDATA[
         cp -r '$input_permit_list.extra_files_path/$input_permit_list.metadata.store_root/permit_list' permit_list &&
         mkdir input_rad &&

@@ -4,6 +4,7 @@
         <import>macros.xml</import>
     </macros>
     <expand macro="requirements"/>
+    <expand macro="version_command"/>
     <command detect_errors="exit_code"><![CDATA[
         ln -s '$input_quant_dir.extra_files_path/$input_quant_dir.metadata.store_root/quant_output' input &&
         #if $input_quant_subset:

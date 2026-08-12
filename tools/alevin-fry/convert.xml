@@ -4,20 +4,14 @@
         <import>macros.xml</import>
     </macros>
     <expand macro="requirements"/>
+    <expand macro="version_command"/>
     <command detect_errors="exit_code"><![CDATA[
-        #if $input.ext == 'bam':
-            ln -s '$input' input.bam &&
-            alevin-fry convert --bam input.bam
-        #else if $input.ext == 'sam':
-            ln -s '$input' input.sam &&
-            alevin-fry convert --bam input.sam
-        #end if
-        $filter_best --output map.rad
-        &&
+        ln -s '$input' 'input.$input.ext' &&
+        alevin-fry convert --bam 'input.$input.ext' $filter_best --output map.rad &&
         mv map.rad '$output_rad'
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="bam,sam" label="BAM or SAM file"/>
+        <param name="input" argument="--bam" type="data" format="bam,sam" label="BAM or SAM file"/>
         <param argument="--filter_best" type="boolean" truevalue="--filter_best" falsevalue="" checked="false" label="Filter best alignments" help="Keep only the highest scoring alignments for each read."/>
     </inputs>
     <outputs>
