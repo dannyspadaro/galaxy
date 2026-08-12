@@ -27,16 +27,8 @@
             #if $sec_advanced_options.multi_barcode_mode.sample_names:
                 --sample-names $sec_advanced_options.multi_barcode_mode.sample_names
             #end if
-            #if $sec_advanced_options.multi_barcode_mode.sample_correction_mode == 'exact':
-                --sample-correction-mode exact
-            #else if $sec_advanced_options.multi_barcode_mode.sample_correction_mode == '1-edit':
-                --sample-correction-mode 1-edit
-            #end if
-            #if $sec_advanced_options.multi_barcode_mode.sample_bc_ori == 'forward':
-                --sample-bc-ori forward
-            #else if $sec_advanced_options.multi_barcode_mode.sample_bc_ori == 'reverse':
-                --sample-bc-ori reverse
-            #end if
+            --sample-correction-mode $sec_advanced_options.multi_barcode_mode.sample_correction_mode
+            --sample-bc-ori $sec_advanced_options.multi_barcode_mode.sample_bc_ori
         #end if
         &&
         mkdir -p '$output_dir.extra_files_path/permit_list' &&

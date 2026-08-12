@@ -13,25 +13,11 @@
         ln -s '$sec_advanced_options.quant_subset' quant_subset.tsv &&
     #end if
     
-    alevin-fry quant --input-dir collated_permit_list --tg-map t2g.tsv --output-dir output $sec_advanced_options.dump_eqclasses $sec_advanced_options.init_uniform --small-thresh $small_thresh
-    #if $resolution_selection == 'cr_like':
-        --resolution cr-like
-    #else if $resolution_selection == 'cr_like_em':
-        --resolution cr-like-em
-    #else if $resolution_selection == 'parsimony_em':
-        --resolution parsimony-em
-    #else if $resolution_selection == 'parsimony':
-        --resolution parsimony
-    #else if $resolution_selection == 'parsimony_gene':
-        --resolution parsimony-gene
-    #else if $resolution_selection == 'parsimony_gene_em':
-        --resolution parsimony-gene-em
-    #else if $resolution_selection == 'trivial':
-        --resolution trivial
-    #end if
+    alevin-fry quant --input-dir collated_permit_list --tg-map t2g.tsv --resolution $resolution_selection --output-dir output $sec_advanced_options.dump_eqclasses --small-thresh '$small_thresh'
 
     #if int($sec_advanced_options.num_bootstraps) > 0:
         --num-bootstraps '$sec_advanced_options.num_bootstraps'
+        $sec_advanced_options.init_uniform
         $sec_advanced_options.summary_stat
     #end if
 
@@ -64,20 +50,20 @@
         <param name="input_collated_rad_dir" type="data" format="directory" label="Directory containing the collated RAD file"/>
         <param name="input_transcript_to_gene_map" type="data" format="tsv,tabular" label="Transcript-to-gene map" help="Headerless tab-separated transcript-to-gene map. Use two columns (target, gene) for standard quantification or three columns (target, gene, S/U) for USA-mode quantification."/>
         <param name="resolution_selection" argument="--resolution" type="select" label="Resolution">
-            <option value="cr_like">cr-like</option>
-            <option value="cr_like_em">cr-like-em</option>
-            <option value="parsimony_em">parsimony-em</option>
+            <option value="cr-like">cr-like</option>
+            <option value="cr-like-em">cr-like-em</option>
+            <option value="parsimony-em">parsimony-em</option>
             <option value="parsimony">parsimony</option>
-            <option value="parsimony_gene">parsimony-gene</option>
-            <option value="parsimony_gene_em">parsimony-gene-em</option>
+            <option value="parsimony-gene">parsimony-gene</option>
+            <option value="parsimony-gene-em">parsimony-gene-em</option>
             <option value="trivial">trivial</option>
         </param>
-        <param argument="--small-thresh" type="integer" min="0" value="100" label="Small threshhold" help="Cells with fewer than this many reads are resolved by a fast path that applies cr-like (winner-take-all) semantics regardless of the chosen resolution. Use value 0 to resolve every cell with the chosen resolution. Default value: 100"/>
+        <param argument="--small-thresh" type="integer" min="0" value="100" label="Small threshold" help="Cells with fewer than this many reads are resolved by a fast path that applies cr-like (winner-take-all) semantics regardless of the chosen resolution. Use value 0 to resolve every cell with the chosen resolution. Default value: 100"/>
         <section name="sec_advanced_options" title="Advanced options" expanded="false">
             <param name="dump_eqclasses" type="boolean" truevalue="--dump-eqclasses" falsevalue="" checked="false" label="Write equivalence class counts" help="Writes a gene-level, UMI-deduplicated equivalence class counts file. This can be used for subsequent analyses where gene-ambiguous reads have been neither resolved nor discarded."/>
-            <!-- did not restrict num_bootstraps to only be usable with cr_like_em and parsimony_em, because the alevin-fry documentation is based on version 0.11.0, so this information could be outdated. Thus num_bootstraps is unrestricted for the case that it may have more functionality in recent versions.  -->
+            <!-- did not restrict num_bootstraps to only be usable with cr-like-em and parsimony-em, because the alevin-fry documentation is based on version 0.11.0, so this information could be outdated. Thus num_bootstraps is unrestricted for the case that it may have more functionality in recent versions.  -->
             <param name="num_bootstraps" type="integer" min="0" value="0" label="Number of bootstraps to use" help="Writes bootstrap inferential replicate information to the outputs. This flag is only meaningful with the resolution modes cr-like-em and parsimony-em."/>
-            <param name="init_uniform" type="boolean" truevalue="--init-uniform" falsevalue="" checked="false" label="Uniform sampling"/>
+            <param name="init_uniform" type="boolean" truevalue="--init-uniform" falsevalue="" checked="false" label="Uniform sampling" help="Only applicable when bootstrap is used."/>
             <param name="summary_stat" type="boolean" truevalue="--summary-stat" falsevalue="" checked="false" label="Store only bootstrap summary statistics" help="Only applicable when bootstrap is used. Writes the summary statistics of the bootstrap replicates (i.e. the mean and variance of the inferential replicates)."/>
             <param name="quant_subset" type="data" format="tsv,tabular" optional="true" label="List of barcodes to quantify" help="One barcode per line. Barcodes not in this list will be ignored during inference and will not appear in the output quantification matrix."/>
             <param argument="--multi-sample-output" type="select" label="Multi-sample output mode" help="Output mode for multi-sample data. Either per-sample matrices, one combined matrix, or both. Default value: separate.">
@@ -102,7 +88,7 @@
     <test expect_num_outputs="1">
         <param name="input_collated_rad_dir" value="collated_permit_list"/>
         <param name="input_transcript_to_gene_map" value="t2g.tsv"/>
-        <param name="resolution_selection" value="cr_like"/>
+        <param name="resolution_selection" value="cr-like"/>
         <param name="small_thresh" value="0"/>
         <section name="sec_advanced_options">
             <param name="dump_eqclasses" value="false"/>
@@ -122,7 +108,7 @@
     <test expect_num_outputs="3">
         <param name="input_collated_rad_dir" value="collated_permit_list"/>
         <param name="input_transcript_to_gene_map" value="t2g.tsv"/>
-        <param name="resolution_selection" value="cr_like"/>
+        <param name="resolution_selection" value="cr-like"/>
         <param name="small_thresh" value="0"/>
         <section name="sec_advanced_options">
             <param name="dump_eqclasses" value="true"/>

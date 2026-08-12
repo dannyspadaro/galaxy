@@ -23,29 +23,15 @@
             --expect-cells $barcode.expect_ncells
         #end if
         #if $sec_advanced_options.multi_barcode_mode.multi_barcode_mode_select == 'yes':
-            --sample-bc-list $sec_advanced_options.sample_bc_list
+            --sample-bc-list '$sec_advanced_options.multi_barcode_mode.sample_bc_list'
             #if $sec_advanced_options.multi_barcode_mode.sample_names:
-                --sample-names $sec_advanced_options.multi_barcode_mode.sample_names
+                --sample-names '$sec_advanced_options.multi_barcode_mode.sample_names'
             #end if
-            #if $sec_advanced_options.multi_barcode_mode.sample_correction_mode == 'exact':
-                --sample-correction-mode exact
-            #else if $sec_advanced_options.multi_barcode_mode.sample_correction_mode == '1-edit':
-                --sample-correction-mode 1-edit
-            #end if
-            #if $sec_advanced_options.multi_barcode_mode.sample_bc_ori == 'forward':
-                --sample-bc-ori forward
-            #else if $sec_advanced_options.multi_barcode_mode.sample_bc_ori == 'reverse':
-                --sample-bc-ori reverse
-            #end if
+            --sample-correction-mode $sec_advanced_options.multi_barcode_mode.sample_correction_mode
+            --sample-bc-ori $sec_advanced_options.multi_barcode_mode.sample_bc_ori
         #end if
         &&
-        alevin-fry collate --input-dir permit_list --rad-dir input_rad
-        #if $collation_mode == 'two_round':
-            --collation-mode two-round
-        #else if $collation_mode == 'fast':
-            --collation-mode fast
-        #end if
-        &&
+        alevin-fry collate --input-dir permit_list --rad-dir input_rad --collation-mode $collation_mode &&
         mkdir -p '$output_dir.extra_files_path/collated_permit_list' &&
         mv permit_list/* '$output_dir.extra_files_path/collated_permit_list'
     ]]></command>
@@ -81,7 +67,7 @@
             </when>
         </conditional>
         <param argument="--collation-mode" type="select" label="Collation mode for multi-barcode data">
-            <option value="two_round" selected="true">two-round (generalizable)</option>
+            <option value="two-round" selected="true">two-round (generalizable)</option>
             <option value="fast">fast (single-pass for 2-level)</option>
         </param>
         <section name="sec_advanced_options" title="Advanced options" expanded="false">
@@ -117,7 +103,7 @@
             <conditional name="barcode">
                 <param name="barcode_selection" value="knee-distance"/>
             </conditional>
-            <param name="collation_mode" value="two_round"/>
+            <param name="collation_mode" value="two-round"/>
             <section name="sec_advanced_options">
                 <conditional name="multi_barcode_mode">
                     <param name="multi_barcode_mode_select" value="no"/>

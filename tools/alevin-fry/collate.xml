@@ -9,13 +9,7 @@
         cp -r '$input_permit_list.extra_files_path/$input_permit_list.metadata.store_root/permit_list' permit_list &&
         mkdir input_rad &&
         ln -s '$input_rad' input_rad/map.rad &&
-        alevin-fry collate --input-dir permit_list --rad-dir input_rad
-        #if $collation_mode == 'two_round':
-            --collation-mode two-round
-        #else if $collation_mode == 'fast':
-            --collation-mode fast
-        #end if
-        &&
+        alevin-fry collate --input-dir permit_list --rad-dir input_rad --collation-mode $collation_mode &&
         mkdir -p '$output_collated_dir.extra_files_path/collated_permit_list' &&
         mv permit_list/* '$output_collated_dir.extra_files_path/collated_permit_list'
     ]]></command>
@@ -23,7 +17,7 @@
         <param name="input_permit_list" type="data" format="directory" label="Output of 'Alevin-Fry Generate Permit List'"/>
         <param name="input_rad" type="data" format="rad" label="RAD file to be collated"/>
         <param name="collation_mode" type="select" label="Collation mode for multi-barcode data">
-            <option value="two_round" selected="true">two-round (generalizable)</option>
+            <option value="two-round" selected="true">two-round (generalizable)</option>
             <option value="fast">fast (single-pass for 2-level)</option>
         </param>
     </inputs>
@@ -34,7 +28,7 @@
     <test expect_num_outputs="1">
         <param name="input_permit_list" value="permit_list"/>
         <param name="input_rad" value="input_rad/map.rad"/>
-        <param name="collation_mode" value="two_round"/>
+        <param name="collation_mode" value="two-round"/>
         <output name="output_collated_dir">
             <extra_files type="directory" value="collated_permit_list/all_freq.bin"/>
             <extra_files type="directory" value="collated_permit_list/collate.json"/>
