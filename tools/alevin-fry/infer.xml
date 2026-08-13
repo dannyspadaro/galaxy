@@ -20,7 +20,7 @@
         mv output/* '$output_dir.extra_files_path/infer_output'
     ]]></command>
     <inputs>
-        <param name="input_quant_dir" type="data" format="directory" label="alevin-fry quant output" help="Output of the alevin-fry quant tool when used with 'Write equivalence class counts file'."/>
+        <param name="input_quant_dir" type="data" format="directory" label="alevin-fry quant output" help="Output of the alevin-fry quant tool when used with 'Write equivalence class counts'."/>
         <param name="input_quant_subset" type="data" format="txt,tabular" optional="true" label="List of barcodes to quantify" help="One barcode per line in the file. Barcodes not in this list will be ignored during inference and will not appear in the output quantification matrix. If this input is left empty, then all of the original barcodes will be quantified."/>
         <param name="input_usa_mode" type="boolean" truevalue="--usa" falsevalue="" checked="false" label="USA mode" help="Whether the input equivalence classes were computed in USA mode."/>
     </inputs>
@@ -39,7 +39,20 @@
     </test>
     </tests>
     <help><![CDATA[
-        help
+This tool runs **alevin-fry infer**, performing inference on equivalence class count data.
+For further details, see the alevin-fry documentation: https://alevin-fry.readthedocs.io/en/latest/
+
+----
+
+**Input**
+
+- Output directory of **alevin-fry quant** when run with "Write equivalence class counts" enabled.
+
+----
+
+**Output**
+
+- Inference results (directory)
     ]]></help>
     <expand macro="citations"/>
 </tool>

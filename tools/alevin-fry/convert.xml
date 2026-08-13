@@ -35,7 +35,20 @@
         </test>
     </tests>
     <help><![CDATA[
-        help
+This tool runs **alevin-fry convert**, converting an input BAM or SAM file into a RAD file.
+Optionally, alignments can be filtered, keeping only the highest scoring alignments for each read.
+
+----
+
+**Input**
+
+- **BAM** or **SAM** file
+
+----
+
+**Output**
+
+- **RAD** file, used as input for **alevin-fry generate permit list and collate**
     ]]></help>
     <expand macro="citations"/>
 </tool>

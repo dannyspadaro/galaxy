@@ -111,8 +111,8 @@
             </output>
         </test>
     </tests>
-    <help>
+    <help><![CDATA[
         help
-    </help>
+    ]]></help>
     <expand macro="citations"/>
 </tool>
