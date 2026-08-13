@@ -128,11 +128,17 @@
         </output>
         <output name="output_feature_dump">
             <assert_contents>
+                <has_line_matching expression="TAAAATCCAGGAAGGA\t3\t3\t1\t1\t0.33333334\t1\t1\t0"/>
+                <has_line_matching expression="GCAAGTGGAAAGGATG\t2\t2\t0\t1\t0\tNaN\t0\t0"/>
+                <has_line_matching expression="GAAGGCATGGGCCCGA\t4\t4\t1\t1\t0.25\t1\t1\t0"/>
                 <has_size value="74515" delta="3000"/>
             </assert_contents>
         </output>
         <output name="output_quant_json">
             <assert_contents>
+                <has_json_property_with_text property="resolution" text="CellRangerLike"/>
+                <has_json_property_with_value property="num_bootstraps" value="0"/>
+                <has_json_property_with_value property="small_thresh" value="0"/>
                 <has_size value="4633" delta="1000"/>
             </assert_contents>
         </output>
